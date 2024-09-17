@@ -1,44 +1,41 @@
 #### Preamble ####
-# Purpose: Cleans the raw plane data recorded by two observers..... [...UPDATE THIS...]
-# Author: Rohan Alexander [...UPDATE THIS...]
-# Date: 6 April 2023 [...UPDATE THIS...]
-# Contact: rohan.alexander@utoronto.ca [...UPDATE THIS...]
+# Purpose: Cleans the raw neighborhood data to prepare it for analysis. 
+# Author: Lexi Knight
+# Date: 17 September 2025
+# Contact: lexi.knight@mail.utoronto.ca
 # License: MIT
-# Pre-requisites: [...UPDATE THIS...]
-# Any other information needed? [...UPDATE THIS...]
+# Pre-requisites: follow 01-download_data.R in scripts folder in order to access raw data
 
 #### Workspace setup ####
+# install packages
+# install.packages("readr")
+# install.packages("arrow")
+
+# load libraries 
 library(tidyverse)
+library(readr)
+library(arrow)
 
 #### Clean data ####
-raw_data <- read_csv("inputs/data/plane_data.csv")
 
-cleaned_data <-
-  raw_data |>
-  janitor::clean_names() |>
-  select(wing_width_mm, wing_length_mm, flying_time_sec_first_timer) |>
-  filter(wing_width_mm != "caw") |>
-  mutate(
-    flying_time_sec_first_timer = if_else(flying_time_sec_first_timer == "1,35",
-                                   "1.35",
-                                   flying_time_sec_first_timer)
-  ) |>
-  mutate(wing_width_mm = if_else(wing_width_mm == "490",
-                                 "49",
-                                 wing_width_mm)) |>
-  mutate(wing_width_mm = if_else(wing_width_mm == "6",
-                                 "60",
-                                 wing_width_mm)) |>
-  mutate(
-    wing_width_mm = as.numeric(wing_width_mm),
-    wing_length_mm = as.numeric(wing_length_mm),
-    flying_time_sec_first_timer = as.numeric(flying_time_sec_first_timer)
-  ) |>
-  rename(flying_time = flying_time_sec_first_timer,
-         width = wing_width_mm,
-         length = wing_length_mm
-         ) |> 
-  tidyr::drop_na()
+# Check if the directory exists
+dir.exists("data/raw_data")
+
+# read the csv file 
+raw_data <- read_csv("data/raw_data/neighborhood_raw_data.csv")
+
+# select columns of interest - neighborhoods
+cleaned_data <- raw_data |>
+  select("rosedale-moore_park", "downtown_yonge_east")
+
+# select rows of interest - demographics
+cleaned_data <- raw_data |>
+  select("total_visible_minority_population", "south_asian", "chinese", "black", "filipiono", "arab", "latin_american", "southeast_asian", "west_asain", "korean", "japanese", "multiple_visible_minorities", "not_a_visible_minority", "Average_total_income_in_2020_among_recipients_($)", "children", "in_a_two-parent_family", "in_a_one-parent_family", "total-knowledge_of_official_languages_for_the_population_in_private_households-25%_sample_data", "english_only", "french_only", "english_and_french", "neither_english_or_french")
+
+# view entire dataset
+print(cleaned_data, n = nrow(cleaned_data))
+
+
 
 #### Save data ####
-write_csv(cleaned_data, "outputs/data/analysis_data.csv")
+write_csv(cleaned_data, "inputs/data/analysis_data/neighborhood_analysis_data.csv")
