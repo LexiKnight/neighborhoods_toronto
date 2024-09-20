@@ -41,30 +41,10 @@ neighborhood_raw_data <- tryCatch({
 
 #### Save data ####
 
-# check directory existence - verify it was actually created
-dir.exists("inputs/data/raw_data")
-
-# list contents - to verify raw_data is there
-list.files("inputs/data", full.names = TRUE)
-
-# check full path 
-full_path <- file.path("inputs", "data", "raw_data")
-print(full_path)
-
-# List files and directories at the current working directory
-list.files(".", recursive = TRUE)
-
-# fixing issue with no file path for analysis_data
-output_dir <- file.path("inputs", "data", "raw_data")
-output_dir <- file.path("inputs", "data", "analysis_data")
-
-
-
-
 # Save the dataset to a CSV file
-write_csv(neighborhood_raw_data, "inputs/data/raw_data/ neighborhood_raw_data.csv")
+write_csv(neighborhood_raw_data, "inputs/data/raw_data/neighborhood_raw_data.csv")
 
 # Print the first few rows of the data as a check
-# head(neighborhood_raw_data)
+head(neighborhood_raw_data)
 
          
