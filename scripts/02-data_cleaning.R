@@ -29,10 +29,10 @@ selected_neighborhoods <- c("Rosedale-Moore Park", "Downtown Yonge East")
 
 # Manually specify the row indices of interest - I am doing this because there
 # are multiple rows with the same names
-visible_minority_categories <- c(1641:1655) # need move up by 1, was 42-56
-income_categories <- c(93:105) #need move up by 1, was 94-106
-education_categories <- c(1982, 1983, 1985:1987, 1989:1990, 1992:1996) # off by one (move all up by 1) should be 1983, 1984, 1986:1988, 1990-1991, 1993:1997
-knowledge_of_official_language <- c(427:431) # should be 28-32. move up by 1
+visible_minority_categories <- c(1641:1655) 
+income_categories <- c(93:105) 
+education_categories <- c(1982, 1983, 1985:1987, 1989:1990, 1992:1996)
+knowledge_of_official_language <- c(427:431)
 
 # Subset the data based on row indices and selected neighborhoods
 visible_minority_data <- raw_data[visible_minority_categories, c("Neighbourhood Name", selected_neighborhoods)]
@@ -48,8 +48,9 @@ final_analysis_data <- bind_rows(
   language_data
 )
 
-# Print the final analysis data
-print(final_analysis_data)
+
+# Print 50 rows of the final analysis data - as a check
+print(final_analysis_data, n = 50)
 
 
 #### Save data ####
