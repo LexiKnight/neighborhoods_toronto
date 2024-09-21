@@ -4069,3 +4069,554 @@ Key Changes
 The summarize_data function now selects only numeric columns for summarization after filtering.
 This ensures that we avoid errors related to non-numeric data types during summarization.
 Try running this code and let me know if it works!
+
+User:
+it didnt work. upon opening the saved dataset, it is just has one row with row names Neighbourhood Name,Total - Visible Minorities,Total - Income,Total - Education,Total - Knowledge of Official Languages. however, when i run print (final_analysis_data) it does give what i want! > print(final_analysis_data)
+# A tibble: 108 × 3
+   Neighbourhood Name Rosedale-Moore Park Downtown Yonge East
+   <chr>                <chr>                 <chr>                
+ 1 Japanese             80                    110                  
+ 2 Korean               85                    445                  
+ 3 Japanese             35                    75                   
+ 4 Korean               55                    245                  
+ 5 Japanese             145                   290                  
+ 6 Korean               90                    545                  
+ 7 South Asian          965                   2415                 
+ 8 Chinese              1170                  2830                 
+ 9 Black                470                   1425                 
+10 Filipino             255                   460                  
+# ℹ 98 more rows
+# ℹ Use print(n = ...) to see more rows
+> 
+> #### Save data ####
+> write_csv(analysis_data, "inputs/data/analysis_data/neighborhood_analysis_data.csv")
+ChatGPT said:
+ChatGPT
+It sounds like final_analysis_data has the structure you want when printed, but the saved file only contains the column headers without the actual data. The issue might be with how the data is being saved or referenced when writing to the CSV file.
+
+Make sure to use final_analysis_data when saving the file, as follows:
+
+r
+Copy code
+#### Save data ####
+write_csv(final_analysis_data, "inputs/data/analysis_data/neighborhood_analysis_data.csv")
+Full Updated Code Snippet for Clarity
+Here’s the complete code, including the saving part:
+
+r
+Copy code
+#### Workspace setup ####
+
+# install packages
+# install.packages("readr")
+# install.packages("dplyr")
+
+# load libraries 
+library(readr)
+library(dplyr)
+
+#### Clean data ####
+
+# Read the csv file 
+raw_data <- read_csv("inputs/data/raw_data/neighborhood_raw_data.csv")
+
+# Trim any extra white spaces in column names
+colnames(raw_data) <- trimws(colnames(raw_data))
+
+# Select columns of interest (neighborhoods and row identifiers)
+selected_neighborhoods <- c("Rosedale-Moore Park", "Downtown Yonge East")
+selected_neighborhoods_data <- raw_data %>%
+  select(`Neighbourhood Name`, all_of(selected_neighborhoods))
+
+# Define categories to filter
+visible_minority <- c("South Asian", "Chinese", "Black", 
+                      "Filipino", "Arab", "Latin American", 
+                      "Southeast Asian", "West Asian", 
+                      "Korean", "Japanese", 
+                      "Multiple visible minorities", 
+                      "Not a visible minority")
+
+income_categories <- c("Under $10,000 (including loss)", "$10,000 to $19,999",
+                       "$20,000 to $29,999", "$30,000 to $39,999", 
+                       "$40,000 to $49,999", "$50,000 to $59,999", 
+                       "$60,000 to $69,999", "$70,000 to $79,999",
+                       "$80,000 to $89,999", "$90,000 to $99,999", 
+                       "$100,000 to $149,999", "$150,000 and over")
+
+highest_level_of_education <- c("No certificate, diploma or degree", 
+                                 "High (secondary) school diploma or equivalency certificate",
+                                 "Postsecondary certificate or diploma below bachelor level", 
+                                 "Apprenticeship or trades certificate or diploma",
+                                 "Non-apprenticeship trades certificate or diploma", 
+                                 "College, CEGEP or other non-university certificate or diploma",
+                                 "University certificate or diploma below bachelor level",
+                                 "Bachelor's degree",
+                                 "University certificate or diploma above bachelor level",
+                                 "Degree in medicine, dentistry, veterinary medicine or optometry",
+                                 "Master's degree", "Earned doctorate")
+
+knowledge_of_official_language <- c("Total - Knowledge of official languages for the population in private households - 25% sample data",
+                                     "English only", "French only", "English and French",
+                                     "Neither English nor French")
+
+# Function to filter and summarize data
+summarize_data <- function(data, categories, total_label) {
+  filtered_data <- data %>%
+    filter(`Neighbourhood Name` %in% categories)
+  
+  numeric_cols <- select(filtered_data, where(is.numeric))
+
+  total_data <- numeric_cols %>%
+    summarise(across(everything(), sum, na.rm = TRUE)) %>%
+    mutate(`Neighbourhood Name` = total_label) %>%
+    select(`Neighbourhood Name`, everything())
+  
+  return(bind_rows(filtered_data, total_data))
+}
+
+# Summarize each category
+final_analysis_data <- bind_rows(
+  summarize_data(selected_neighborhoods_data, visible_minority, "Total - Visible Minorities"),
+  summarize_data(selected_neighborhoods_data, income_categories, "Total - Income"),
+  summarize_data(selected_neighborhoods_data, highest_level_of_education, "Total - Education"),
+  summarize_data(selected_neighborhoods_data, knowledge_of_official_language, "Total - Knowledge of Official Languages")
+)
+
+# Print the final analysis data
+print(final_analysis_data)
+
+#### Save data ####
+write_csv(final_analysis_data, "inputs/data/analysis_data/neighborhood_analysis_data.csv")
+Check the Save
+Make sure you’re running the write_csv line after the print statement, and that it references final_analysis_data correctly.
+After running the code, open the saved CSV file again to see if the data is now saved as expected.
+Let me know how it goes!
+
+
+
+
+
+
+You said:
+ok! so it worked! I have a dataset with values. the only issue is that the variables are all messed up. For example, there are 6 different rows for "Japanese". Additionally the "total- visible minority" values indicate NA for both neighborhoods
+ChatGPT said:
+ChatGPT
+I'm glad it worked, but it seems like we need to fix two issues:
+
+Duplicated Rows (e.g., multiple "Japanese" rows): This might happen because there are slight differences in the labels or because the same category is appearing multiple times. We can group by the row categories (like "Visible Minorities") and sum their values to collapse the duplicates.
+
+NA in "Total - Visible Minority": This likely indicates that the summation step isn’t capturing numeric values properly. We should ensure that all relevant columns contain numeric data before summing them.
+
+Here’s how we can address both of these:
+
+Updated Steps:
+Combine Duplicates: We will group the data by the Neighbourhood Name column and other relevant columns (like visible minority categories) and sum any duplicates.
+Fix the NA values in the Total: We will force the summation of visible minorities, ensuring that non-numeric entries don’t interfere.
+Updated Code:
+r
+Copy code
+#### Workspace setup ####
+
+# install packages
+# install.packages("readr")
+# install.packages("dplyr")
+
+# load libraries 
+library(readr)
+library(dplyr)
+
+#### Clean data ####
+
+# Read the csv file 
+raw_data <- read_csv("inputs/data/raw_data/neighborhood_raw_data.csv")
+
+# Trim any extra white spaces in column names
+colnames(raw_data) <- trimws(colnames(raw_data))
+
+# Select columns of interest (neighborhoods and row identifiers)
+selected_neighborhoods <- c("Rosedale-Moore Park", "Downtown Yonge East")
+selected_neighborhoods_data <- raw_data %>%
+  select(`Neighbourhood Name`, all_of(selected_neighborhoods))
+
+# Define categories to filter
+visible_minority <- c("South Asian", "Chinese", "Black", 
+                      "Filipino", "Arab", "Latin American", 
+                      "Southeast Asian", "West Asian", 
+                      "Korean", "Japanese", 
+                      "Multiple visible minorities", 
+                      "Not a visible minority")
+
+income_categories <- c("Under $10,000 (including loss)", "$10,000 to $19,999",
+                       "$20,000 to $29,999", "$30,000 to $39,999", 
+                       "$40,000 to $49,999", "$50,000 to $59,999", 
+                       "$60,000 to $69,999", "$70,000 to $79,999",
+                       "$80,000 to $89,999", "$90,000 to $99,999", 
+                       "$100,000 to $149,999", "$150,000 and over")
+
+highest_level_of_education <- c("No certificate, diploma or degree", 
+                                 "High (secondary) school diploma or equivalency certificate",
+                                 "Postsecondary certificate or diploma below bachelor level", 
+                                 "Apprenticeship or trades certificate or diploma",
+                                 "Non-apprenticeship trades certificate or diploma", 
+                                 "College, CEGEP or other non-university certificate or diploma",
+                                 "University certificate or diploma below bachelor level",
+                                 "Bachelor's degree",
+                                 "University certificate or diploma above bachelor level",
+                                 "Degree in medicine, dentistry, veterinary medicine or optometry",
+                                 "Master's degree", "Earned doctorate")
+
+knowledge_of_official_language <- c("Total - Knowledge of official languages for the population in private households - 25% sample data",
+                                     "English only", "French only", "English and French",
+                                     "Neither English nor French")
+
+# Function to filter, summarize data, and handle duplicates
+summarize_data <- function(data, categories, total_label) {
+  filtered_data <- data %>%
+    filter(`Neighbourhood Name` %in% categories)
+  
+  # Group by the neighbourhood and the category (to avoid duplicates)
+  grouped_data <- filtered_data %>%
+    group_by(`Neighbourhood Name`) %>%
+    summarise(across(where(is.numeric), sum, na.rm = TRUE)) %>%
+    ungroup()
+
+  # Create a total row
+  total_data <- grouped_data %>%
+    summarise(across(where(is.numeric), sum, na.rm = TRUE)) %>%
+    mutate(`Neighbourhood Name` = total_label)
+
+  return(bind_rows(grouped_data, total_data))
+}
+
+# Summarize each category
+final_analysis_data <- bind_rows(
+  summarize_data(selected_neighborhoods_data, visible_minority, "Total - Visible Minorities"),
+  summarize_data(selected_neighborhoods_data, income_categories, "Total - Income"),
+  summarize_data(selected_neighborhoods_data, highest_level_of_education, "Total - Education"),
+  summarize_data(selected_neighborhoods_data, knowledge_of_official_language, "Total - Knowledge of Official Languages")
+)
+
+# Print the final analysis data
+print(final_analysis_data)
+
+#### Save data ####
+write_csv(final_analysis_data, "inputs/data/analysis_data/neighborhood_analysis_data.csv")
+Key Changes:
+Handling Duplicate Rows: The group_by step now ensures that we sum any duplicate values across rows for the same category (e.g., "Japanese").
+Fixing "Total - Visible Minority": The summarise function now properly handles numeric values to ensure that no NA values appear in the final row sums.
+Expected Output:
+Only one row for each category (e.g., "Japanese").
+Correct total values for visible minorities, income, education, and official languages across the neighborhoods.
+Try this updated code and let me know if the issues with duplicates and NA totals are resolved!
+
+
+
+
+
+
+You said:
+so i realized why there are 6 japanese. its because there are 6 rows in the raw dataset that are named the same thing. This is not good! I have thus decided that instead of spelling out the row of interest that i want to include in the final dataset, I will use i think its called indexing?  giving the row numbers. can we do that?
+ChatGPT said:
+ChatGPT
+Yes, you can definitely use row indexing instead of specifying the names directly! By using the row indices, you can target specific rows in your dataset without needing to worry about duplicate names.
+
+How to use row indices:
+Instead of filtering rows by their names (like "Japanese"), we will filter by the row numbers (indices) you're interested in.
+
+Steps:
+Identify the rows you want to keep by their indices.
+Filter the dataset by these indices.
+Proceed with the same summarization steps as before.
+Here’s how you can modify the code to use row indexing:
+
+Updated Code Using Row Indices:
+r
+Copy code
+#### Workspace setup ####
+
+# install packages
+# install.packages("readr")
+# install.packages("dplyr")
+
+# load libraries 
+library(readr)
+library(dplyr)
+
+#### Clean data ####
+
+# Read the csv file 
+raw_data <- read_csv("inputs/data/raw_data/neighborhood_raw_data.csv")
+
+# Trim any extra white spaces in column names
+colnames(raw_data) <- trimws(colnames(raw_data))
+
+# Select columns of interest (neighborhoods and row identifiers)
+selected_neighborhoods <- c("Rosedale-Moore Park", "Downtown Yonge East")
+
+# Manually specify the row indices of interest
+# Replace these with the correct row numbers you want to include
+rows_of_interest <- c(5, 10, 15, 20, 25, 30)  # Example row numbers
+
+# Select only the rows of interest based on indices
+selected_data <- raw_data[rows_of_interest, ]
+
+# Now you have your selected rows and neighborhoods:
+# Select the two neighborhoods you care about
+selected_neighborhoods_data <- selected_data %>%
+  select(all_of(selected_neighborhoods))
+
+# Optional: Create a new "Neighbourhood Name" column for the row identifiers
+selected_neighborhoods_data <- selected_data %>%
+  mutate(`Neighbourhood Name` = rownames(selected_data)) %>%
+  select(`Neighbourhood Name`, all_of(selected_neighborhoods))
+
+# Function to summarize the data
+summarize_data <- function(data, total_label) {
+  # Summarize across the numeric columns (i.e., neighborhoods)
+  summarized_data <- data %>%
+    group_by(`Neighbourhood Name`) %>%
+    summarise(across(where(is.numeric), sum, na.rm = TRUE)) %>%
+    ungroup()
+  
+  # Add a total row
+  total_data <- summarized_data %>%
+    summarise(across(where(is.numeric), sum, na.rm = TRUE)) %>%
+    mutate(`Neighbourhood Name` = total_label)
+
+  return(bind_rows(summarized_data, total_data))
+}
+
+# Summarize the data using the function
+final_analysis_data <- summarize_data(selected_neighborhoods_data, "Total - Selected Rows")
+
+# Print the final analysis data
+print(final_analysis_data)
+
+#### Save data ####
+write_csv(final_analysis_data, "inputs/data/analysis_data/neighborhood_analysis_data.csv")
+Key Changes:
+Row Indexing: Instead of filtering by row names, we’re using the rows_of_interest vector to directly specify the row indices.
+Summarization: We still summarize the values for the selected rows in the two neighborhoods.
+Steps to Follow:
+Replace the rows_of_interest vector with the actual row numbers that you want to include in the final dataset.
+This method will allow you to filter and work with the specific rows you care about while avoiding any issues with duplicate names. Let me know how it works for you!
+
+
+
+
+
+
+You said:
+# visible minority categories - in the raw dataset these are rows 1642 to 1656, previously i wanted to make a new row for the total, i do not want this anymore. how would i select a range of rows rather than listing a few liek rows_of_interest <- c(5, 10, 15, 20, 25, 30) 
+ChatGPT said:
+ChatGPT
+Memory updated
+To select a range of rows (e.g., 1642 to 1656) from your dataset, you can use slice() from the dplyr package. Here's how you can modify the code to select that range of rows:
+
+r
+Copy code
+# Select visible minority rows (from 1642 to 1656)
+visible_minority_data <- raw_data %>%
+  slice(1642:1656)
+This will select rows 1642 to 1656 from your dataset. Let me know if you'd like further adjustments!
+
+
+
+
+
+
+You said:
+please note for income categories, i previously wanted to make a total but have since realized i do not need a total anymore
+ChatGPT said:
+ChatGPT
+Memory updated
+To select a range of rows by their index (e.g., 1642 to 1656) in your dataset, you can use indexing directly when filtering. Here's how you would apply it to the visible minority categories:
+
+r
+Copy code
+# Select visible minority rows (1642 to 1656)
+visible_minority_data <- raw_data[1642:1656, ]
+
+# You can now select the columns for the neighborhoods
+visible_minority_neighborhoods <- visible_minority_data %>%
+  select(all_of(selected_neighborhoods))
+This will filter rows based on their indices and keep the selected neighborhood columns. You can do the same for other ranges as needed.
+
+
+
+
+
+
+You said:
+did i do this right? education_categories <- c(1983, 1984, 1986:1988, 1990:1991, 1993:1997)
+# in the raw dataset, these are rows 1983, 1984, 1986- 1988, 1990-1991, 1993-1997
+ChatGPT said:
+ChatGPT
+Memory updated
+Yes, your approach is correct. This line:
+
+r
+Copy code
+education_categories <- c(1983, 1984, 1986:1988, 1990:1991, 1993:1997)
+will select rows 1983, 1984, 1986 to 1988, 1990 to 1991, and 1993 to 1997 from your raw dataset. This indexing method is valid and should work as expected. Let me know if you'd like further adjustments!
+
+
+
+
+
+
+You said:
+ok this is what i currently have. I am not sure how to change the second part #### Workspace setup ####
+
+# install packages
+# install.packages("readr")
+# install.packages("dplyr")
+
+# load libraries 
+library(readr)
+library(dplyr)
+
+#### Clean data ####
+
+# Read the csv file 
+raw_data <- read_csv("inputs/data/raw_data/neighborhood_raw_data.csv")
+
+# Trim any extra white spaces in column names
+colnames(raw_data) <- trimws(colnames(raw_data))
+
+# Select columns of interest (neighborhoods and row identifiers)
+selected_neighborhoods <- c("Rosedale-Moore Park", "Downtown Yonge East")
+
+# Manually specify the row indices of interest - I am doing this because there
+# are multiple rows with the same names
+visible_minority_categories <- c(1642:1656)
+
+income_categories <- c(94:106)
+
+education_categories <- c(1983, 1984, 1986:1988, 1990:1991, 1993:1997)
+
+# in the raw dataset, these are rows 428 to 432
+knowledge_of_official_language <- c(428:432)
+
+
+# not sure from here on? 
+
+
+# Function to filter and summarize data
+summarize_data <- function(data, categories, total_label) {
+  filtered_data <- data %>%
+    filter(Neighbourhood Name %in% categories)
+  
+  numeric_cols <- select(filtered_data, where(is.numeric))
+  
+  total_data <- numeric_cols %>%
+    summarise(across(everything(), sum, na.rm = TRUE)) %>%
+    mutate(Neighbourhood Name = total_label) %>%
+    select(Neighbourhood Name, everything())
+  
+  return(bind_rows(filtered_data, total_data))
+}
+
+# Summarize each category
+final_analysis_data <- bind_rows(
+  summarize_data(selected_neighborhoods_data, visible_minority, "Total - Visible Minorities"),
+  summarize_data(selected_neighborhoods_data, income_categories, "Total - Income"),
+  summarize_data(selected_neighborhoods_data, highest_level_of_education, "Total - Education"),
+  summarize_data(selected_neighborhoods_data, knowledge_of_official_language, "Total - Knowledge of Official Languages")
+)
+
+# Print the final analysis data
+print(final_analysis_data)
+
+#### Save data ####
+write_csv(final_analysis_data, "inputs/data/analysis_data/neighborhood_analysis_data.csv")
+ChatGPT said:
+ChatGPT
+Your current code looks solid up to the point where you specify the row indices, but there are a few things to address:
+
+Filtering by row index: Since you're working with row indices and neighborhoods as columns, the filter() function won't work for row filtering. Instead, we should use row subsetting to extract the rows of interest.
+
+Summarization: Since you don’t need totals anymore, we’ll adjust the summarization logic to just keep and bind the data without adding any totals.
+
+Here’s how you can adjust the second part of your script:
+
+Updated Code:
+r
+Copy code
+#### Workspace setup ####
+
+# install packages
+# install.packages("readr")
+# install.packages("dplyr")
+
+# load libraries 
+library(readr)
+library(dplyr)
+
+#### Clean data ####
+
+# Read the csv file 
+raw_data <- read_csv("inputs/data/raw_data/neighborhood_raw_data.csv")
+
+# Trim any extra white spaces in column names
+colnames(raw_data) <- trimws(colnames(raw_data))
+
+# Select columns of interest (neighborhoods and row identifiers)
+selected_neighborhoods <- c("Rosedale-Moore Park", "Downtown Yonge East")
+
+# Manually specify the row indices of interest
+visible_minority_categories <- c(1642:1656)
+income_categories <- c(94:106)
+education_categories <- c(1983, 1984, 1986:1988, 1990:1991, 1993:1997)
+knowledge_of_official_language <- c(428:432)
+
+# Subset the data based on row indices and selected neighborhoods
+visible_minority_data <- raw_data[visible_minority_categories, c("Neighbourhood Name", selected_neighborhoods)]
+income_data <- raw_data[income_categories, c("Neighbourhood Name", selected_neighborhoods)]
+education_data <- raw_data[education_categories, c("Neighbourhood Name", selected_neighborhoods)]
+language_data <- raw_data[knowledge_of_official_language, c("Neighbourhood Name", selected_neighborhoods)]
+
+# Combine all the subsets into one final dataset
+final_analysis_data <- bind_rows(
+  visible_minority_data,
+  income_data,
+  education_data,
+  language_data
+)
+
+# Print the final analysis data
+print(final_analysis_data)
+
+#### Save data ####
+write_csv(final_analysis_data, "inputs/data/analysis_data/neighborhood_analysis_data.csv")
+Explanation of Changes:
+Row Subsetting: We're using row indexing (like raw_data[1642:1656, ]) to extract rows for visible minority, income, education, and language categories.
+No Totals Needed: Removed the total calculation since you decided against summarizing the categories.
+Combining Rows: After subsetting, we're combining all the data into final_analysis_data using bind_rows(), so all the rows of interest for each category are included.
+This should give you a dataset where each row corresponds to one of the categories you specified (e.g., visible minority, income, etc.), and the columns correspond to the two neighborhoods you’re focusing on.
+
+Let me know if further adjustments are needed!
+
+
+
+
+
+
+You said:
+i wanna see more rows # ℹ 35 more rows
+# ℹ Use print(n = ...) to see more rows
+ChatGPT said:
+ChatGPT
+You can display more rows by specifying the number of rows you want to see with the print() function. For example, to display 50 rows, you can modify your print() statement like this:
+
+r
+Copy code
+# Print 50 rows of the final analysis data
+print(final_analysis_data, n = 50)
+If you want to display all the rows in the dataset, you can set n to a large number (like the total number of rows) or use n = Inf to print all rows:
+
+r
+Copy code
+# Print all rows of the final analysis data
+print(final_analysis_data, n = Inf)
+This will allow you to see as many rows as you'd like from the dataset.
