@@ -4,7 +4,7 @@
 # Date: 17 September 2025
 # Contact: lexi.knight@mail.utoronto.ca
 # License: MIT
-# Pre-requisites: follow 01-download_data.R in scripts folder in order to access raw data
+# Pre-requisites: complete 01-download_data.R in scripts folder in order to access raw data.
 
 #### Workspace setup ####
 
@@ -47,6 +47,15 @@ final_analysis_data <- bind_rows(
   education_data,
   language_data
 )
+
+# Renaming rows for a cleaner look
+final_analysis_data <- final_analysis_data %>%
+  mutate(`Neighbourhood Name` = replace(`Neighbourhood Name`, 
+                                        `Neighbourhood Name` == "Total - Visible minority for the population in private households - 25% sample data", 
+                                        "Total - visible minority"),
+         `Neighbourhood Name` = replace(`Neighbourhood Name`, 
+                                        `Neighbourhood Name` == "Total - Knowledge of official languages for the population in private households - 25% sample data", 
+                                        "Total - language"))
 
 
 # Print 50 rows of the final analysis data - as a check
