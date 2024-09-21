@@ -7,18 +7,15 @@
 
 
 #### Workspace setup ####
-
-# install packages
-# install.packages("opendatatoronto")
-# install.packages("tidyverse")
+# Install the necessary packages if needed
 # install.packages("httr")
 # install.packages("readxl")
+# install.packages("tidyverse")
 
-# load packages
-library(opendatatoronto)
-library(tidyverse)
+# Load required libraries
 library(httr)
 library(readxl)
+library(tidyverse)
 
 #### Download data ####
 # Replace with the direct URL to the XLSX file
@@ -32,9 +29,9 @@ if (response$status_code != 200) {
   stop("Failed to download file: HTTP ", response$status_code)
 }
 
-# Read the XLSX file into R
+# Read the XLSX file into R (if it has multiple sheets, read the first sheet by default)
 neighborhood_raw_data <- tryCatch({
-  read_excel(tf)
+  read_excel(tf, sheet = 1)  # Add the sheet argument to handle multi-sheet files
 }, error = function(e) {
   stop("Error reading XLSX file: ", e$message)
 })
@@ -47,4 +44,3 @@ write_csv(neighborhood_raw_data, "inputs/data/raw_data/neighborhood_raw_data.csv
 # Print the first few rows of the data as a check
 head(neighborhood_raw_data)
 
-         
