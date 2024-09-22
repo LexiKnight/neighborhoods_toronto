@@ -4834,3 +4834,1545 @@ Unrealistic simulation: If the actual dataset contains 46 entries, simulating 20
 Data integrity: Simulating more entries than you have might introduce issues, such as creating non-representative distributions that could distort conclusions.
 Extra processing time: Larger datasets may require more processing time, especially for complex analyses or visualizations.
 If you want to closely reflect the real dataset, it's best to keep the simulation size at 46. But if your goal is testing models or running exploratory analysis with more data, increasing the size to 200 might make sense.
+
+User:
+Next, i need to write tests to test my neighborhood_analysis_data. I'll provide an example of my past work to follow as a guideline. However the main difference is i used a parquet in my previous work but I will not be using a parquet here. can you suggest some tests for the neighborhood data? #### Workspace setup ####
+
+# install packages 
+# install.packages("tidyverse")
+# install.packages("testthat")
+# install.packages("here")
+# install.packages("arrow")
+# install.packages("dplyr")
+
+# load libraries
+# library(tidyverse) # maybe dont need
+library(testthat)
+library(here)
+library(arrow) # needed to read parquet
+# library(dplyr) # maybe dont need
+
+#### Test data ####
+
+test_that("Data Cleaning Tests", {
+  # load packages
+  suppressWarnings(library(tidyverse))
+  suppressWarnings(library(dplyr))
+  
+  # load data
+  analysis_data <- read_parquet(file = here::here("data/analysis_data/lung_cancer_analysis_data.parquet"))
+  
+  # Test if the dataset has 382 entries
+  expect_equal(nrow(analysis_data), 382)
+  
+  # Test if 'pathologic_stage' contains the correct categories 
+  expect_true(all(analysis_data$pathologic_stage %in% c('Stage I', 'Stage IA', 'Stage IB', 'Stage II', 'Stage IIA', 'Stage IIB', 'Stage III', 'Stage IIIA', 'Stage IIIB', 'Stage IV')))
+  
+  # Test if 'lymph_node_involvement' contains the correct categories 
+  expect_true(all(analysis_data$lymph_node_involvement %in% c('N0', 'N1', 'N2', 'N3', 'NX')))
+  
+  # Test if 'presence_of_metastasis' contains the correct categories
+  expect_true(all(analysis_data$presence_of_distant_metastasis %in% c('MX', 'M0', 'M1', 'M1a', 'M1b')))
+  
+  # Test if 'tumor_size' contains the correct categories 
+  expect_true(all(analysis_data$tumor_size %in% c('T1', 'T1a', 'T1b', 'T2', 'T2a', 'T2b', 'T3', 'T4', 'TX')))
+
+  # Test if 'days_to_death' is numeric 
+  expect_true(all(is.numeric(analysis_data$days_to_death)))
+  
+  # Check the data types again
+  print(class(analysis_data$days_to_death))
+  
+  # Test if 'treatment_type' only contains 'Pharmaceutical Therapy, NOS' and 'Radiation Therapy, NOS'
+  expect_true(all(analysis_data$treatment_type %in% c('Pharmaceutical Therapy, NOS', 'Radiation Therapy, NOS')))
+}) 
+ChatGPT said:
+ChatGPT
+Memory updated
+Based on your previous work, here are some test ideas for the neighborhood_analysis_data:
+
+Test Setup
+r
+Copy code
+#### Test data ####
+test_that("Neighborhood Data Tests", {
+  
+  # Load necessary libraries
+  library(testthat)
+  library(readr)
+  
+  # Load neighborhood data
+  analysis_data <- read_csv("inputs/data/analysis_data/neighborhood_analysis_data.csv")
+  
+  # Test if the dataset has 46 entries
+  expect_equal(nrow(analysis_data), 46)
+  
+  # Test if the 'Neighbourhood Name' contains only specific neighborhoods
+  expect_true(all(analysis_data$`Neighbourhood Name` %in% c('Rosedale-Moore Park', 'Downtown Yonge East')))
+  
+  # Test if the visible minority categories include expected groups
+  visible_minority_categories <- c("South Asian", "Chinese", "Black", "Filipino", "Arab", "Latin American", "Southeast Asian", "West Asian", "Korean", "Japanese", "Multiple visible minorities", "Not a visible minority")
+  expect_true(all(analysis_data$`Neighbourhood Name`[1:12] %in% visible_minority_categories))
+  
+  # Test if income categories are within expected ranges
+  income_categories <- c("Under $10,000 (including loss)", "$10,000 to $19,999", "$20,000 to $29,999", "$30,000 to $39,999", "$40,000 to $49,999", "$50,000 to $59,999", "$60,000 to $69,999", "$70,000 to $79,999", "$80,000 to $89,999", "$90,000 to $99,999", "$100,000 to $149,999", "$150,000 and over")
+  expect_true(all(analysis_data$`Neighbourhood Name`[13:24] %in% income_categories))
+  
+  # Test if education categories are as expected
+  education_categories <- c("No certificate, diploma or degree", "High school diploma or equivalency certificate", "Postsecondary certificate or diploma", "Bachelor's degree", "Master's degree", "Earned doctorate")
+  expect_true(all(analysis_data$`Neighbourhood Name`[25:30] %in% education_categories))
+  
+  # Test if 'Knowledge of official languages' contains correct values
+  language_categories <- c("English only", "French only", "English and French", "Neither English nor French")
+  expect_true(all(analysis_data$`Neighbourhood Name`[31:35] %in% language_categories))
+  
+  # Test if all values are numeric (except for the `Neighbourhood Name` column)
+  expect_true(all(sapply(analysis_data[, -1], is.numeric)))
+
+})
+Key Test Features:
+Number of Entries: Ensures the dataset has 46 rows.
+Neighborhood Names: Confirms the two selected neighborhoods are correct.
+Visible Minority Categories: Tests that visible minority categories are as expected.
+Income Categories: Confirms the income range values are correct.
+Education Categories: Verifies that education levels are correctly represented.
+Language Knowledge: Ensures the correct language knowledge categories are included.
+Numeric Data Validation: Ensures that all columns except Neighbourhood Name contain numeric values.
+These tests will help validate that your data is structured as expected and contains the appropriate categories.
+
+
+
+
+
+
+You said:
+my updated code: #### Test data ####
+test_that("Neighborhood Data Tests", {
+  
+  
+  # Install libraries 
+  # install.packages("testthat")
+  # install.packages("readr")
+  
+  # Load necessary libraries
+  library(testthat)
+  library(readr)
+  
+  # Load neighborhood data
+  analysis_data <- read_csv("inputs/data/analysis_data/neighborhood_analysis_data.csv")
+  
+  # Test if the dataset has 45 entries
+  expect_equal(nrow(analysis_data), 45)
+  
+  # Test if the 'Neighbourhood Name' contains only specific neighborhoods
+  expect_true(all(analysis_data$Neighbourhood Name %in% c('Rosedale-Moore Park', 'Downtown Yonge East')))
+  
+  # Test if the visible minority categories include expected groups
+  visible_minority_categories <- c("South Asian", "Chinese", "Black", "Filipino", "Arab", "Latin American", "Southeast Asian", "West Asian", "Korean", "Japanese", "Multiple visible minorities", "Not a visible minority")
+  expect_true(all(analysis_data$Neighbourhood Name[1:12] %in% visible_minority_categories))
+  
+  # Test if income categories are within expected ranges
+  income_categories <- c("Under $10,000 (including loss)", "$10,000 to $19,999", "$20,000 to $29,999", "$30,000 to $39,999", "$40,000 to $49,999", "$50,000 to $59,999", "$60,000 to $69,999", "$70,000 to $79,999", "$80,000 to $89,999", "$90,000 to $99,999", "$100,000 to $149,999", "$150,000 and over")
+  expect_true(all(analysis_data$Neighbourhood Name[13:24] %in% income_categories))
+  
+  # Test if education categories are as expected
+  education_categories <- c("No certificate, diploma or degree", "High school diploma or equivalency certificate", "Postsecondary certificate or diploma", "Bachelor's degree", "Master's degree", "Earned doctorate")
+  expect_true(all(analysis_data$Neighbourhood Name[25:30] %in% education_categories))
+  
+  # Test if 'Knowledge of official languages' contains correct values
+  language_categories <- c("English only", "French only", "English and French", "Neither English nor French")
+  expect_true(all(analysis_data$Neighbourhood Name[31:35] %in% language_categories))
+  
+  # Test if all values are numeric (except for the Neighbourhood Name column)
+  expect_true(all(sapply(analysis_data[, -1], is.numeric)))
+  
+})   and the test errors : ── Failure: Neighborhood Data Tests ────────────────────────────────────────────
+all(...) is not TRUE
+
+actual:   FALSE
+expected: TRUE 
+
+── Failure: Neighborhood Data Tests ────────────────────────────────────────────
+all(analysis_data$Neighbourhood Name[1:12] %in% visible_minority_categories) is not TRUE
+
+actual:   FALSE
+expected: TRUE 
+
+── Failure: Neighborhood Data Tests ────────────────────────────────────────────
+all(analysis_data$Neighbourhood Name[13:24] %in% income_categories) is not TRUE
+
+actual:   FALSE
+expected: TRUE 
+
+── Failure: Neighborhood Data Tests ────────────────────────────────────────────
+all(analysis_data$Neighbourhood Name[25:30] %in% education_categories) is not TRUE
+
+actual:   FALSE
+expected: TRUE 
+
+── Failure: Neighborhood Data Tests ────────────────────────────────────────────
+all(analysis_data$Neighbourhood Name[31:35] %in% language_categories) is not TRUE
+
+actual:   FALSE
+expected: TRUE 
+
+Error: Test failed
+ChatGPT said:
+ChatGPT
+It looks like your tests are failing because the actual values in the Neighbourhood Name column are not matching your expectations. Here’s how you can troubleshoot and fix the issues:
+
+Steps to Diagnose and Fix
+Check the Actual Values: Before running the tests, print out the unique values in the Neighbourhood Name column to see what's actually in your dataset.
+
+r
+Copy code
+print(unique(analysis_data$`Neighbourhood Name`))
+Adjust the Tests: Ensure that your expected categories in the tests align with the actual unique values from your dataset. If there are discrepancies, you may need to adjust the expected values.
+
+Verify Indexing Ranges: Make sure that the ranges you’ve specified in your tests match the structure of your data. If your dataset has fewer or different categories than expected, the ranges need to be updated.
+
+Modify the Tests: Based on the actual values, update your tests accordingly. For example, if your visible minority categories are mixed in with income categories or if they are not in the first 12 rows, adjust the indexing.
+
+Revised Testing Code Example
+Here’s a modified version of your test script that includes a diagnostic print statement:
+
+r
+Copy code
+#### Test data ####
+test_that("Neighborhood Data Tests", {
+  
+  # Load necessary libraries
+  library(testthat)
+  library(readr)
+  
+  # Load neighborhood data
+  analysis_data <- read_csv("inputs/data/analysis_data/neighborhood_analysis_data.csv")
+  
+  # Print unique neighborhood names for diagnosis
+  print(unique(analysis_data$`Neighbourhood Name`))
+  
+  # Test if the dataset has 45 entries
+  expect_equal(nrow(analysis_data), 45)
+  
+  # Test if the 'Neighbourhood Name' contains only specific neighborhoods
+  expect_true(all(analysis_data$`Neighbourhood Name` %in% c('Rosedale-Moore Park', 'Downtown Yonge East')))
+  
+  # Update visible minority categories based on actual data
+  visible_minority_categories <- c("South Asian", "Chinese", "Black", "Filipino", "Arab", "Latin American", "Southeast Asian", "West Asian", "Korean", "Japanese", "Multiple visible minorities", "Not a visible minority")
+  expect_true(all(analysis_data$`Neighbourhood Name` %in% visible_minority_categories))
+  
+  # Update income categories
+  income_categories <- c("Under $10,000 (including loss)", "$10,000 to $19,999", "$20,000 to $29,999", "$30,000 to $39,999", "$40,000 to $49,999", "$50,000 to $59,999", "$60,000 to $69,999", "$70,000 to $79,999", "$80,000 to $89,999", "$90,000 to $99,999", "$100,000 to $149,999", "$150,000 and over")
+  expect_true(all(analysis_data$`Neighbourhood Name` %in% income_categories))
+  
+  # Update education categories
+  education_categories <- c("No certificate, diploma or degree", "High school diploma or equivalency certificate", "Postsecondary certificate or diploma", "Bachelor's degree", "Master's degree", "Earned doctorate")
+  expect_true(all(analysis_data$`Neighbourhood Name` %in% education_categories))
+  
+  # Update language categories
+  language_categories <- c("English only", "French only", "English and French", "Neither English nor French")
+  expect_true(all(analysis_data$`Neighbourhood Name` %in% language_categories))
+  
+  # Test if all values are numeric (except for the `Neighbourhood Name` column)
+  expect_true(all(sapply(analysis_data[, -1], is.numeric)))
+  
+})
+Additional Notes
+After running the diagnostic print statement, check the actual neighborhood names and update your tests accordingly.
+Ensure that your data has the expected structure, as the test failures might indicate that the data isn’t being processed as you anticipated.
+
+
+
+
+
+You said:
+> # Print unique neighborhood names for diagnosis
+>   print(unique(analysis_data$Neighbourhood Name))
+character(0)
+ChatGPT said:
+ChatGPT
+If print(unique(analysis_data$Neighbourhood Name)) returns character(0), it means that the Neighbourhood Name column is empty or doesn’t exist in your dataset. This could be due to several reasons:
+
+Steps to Diagnose the Issue
+Check Column Names: Print out the names of all columns in your analysis_data to verify that Neighbourhood Name exists and is spelled correctly.
+
+r
+Copy code
+print(colnames(analysis_data))
+Inspect the Dataset: Look at the first few rows of your dataset to see its structure and contents.
+
+r
+Copy code
+print(head(analysis_data))
+Check Data Loading: Ensure that the data is being loaded correctly from the CSV file. There may be an issue with the file path or the content of the CSV itself.
+
+r
+Copy code
+analysis_data <- read_csv("inputs/data/analysis_data/neighborhood_analysis_data.csv")
+Next Steps
+If the column name is incorrect or missing, update your tests to reflect the correct structure.
+If the dataset is empty, check the CSV file to ensure it contains the expected data.
+If you find that the data is structured differently than you thought, you may need to adjust your approach in how you access and test it.
+Let me know what you find, and we can troubleshoot further!
+
+
+
+
+
+
+You said:
+>   # Print unique neighborhood names for diagnosis
+>   print(unique(neighborhood_analysis_data$Neighbourhood Name))
+ [1] "Total - visible minority"                                       
+ [2] "Total visible minority population"                              
+ [3] "South Asian"                                                    
+ [4] "Chinese"                                                        
+ [5] "Black"                                                          
+ [6] "Filipino"                                                       
+ [7] "Arab"                                                           
+ [8] "Latin American"                                                 
+ [9] "Southeast Asian"                                                
+[10] "West Asian"                                                     
+[11] "Korean"                                                         
+[12] "Japanese"                                                       
+[13] "Visible minority, n.i.e."                                       
+[14] "Multiple visible minorities"                                    
+[15] "Not a visible minority"                                         
+[16] "Under $10,000 (including loss)"                                 
+[17] "$10,000 to $19,999"                                             
+[18] "$20,000 to $29,999"                                             
+[19] "$30,000 to $39,999"                                             
+[20] "$40,000 to $49,999"                                             
+[21] "$50,000 to $59,999"                                             
+[22] "$60,000 to $69,999"                                             
+[23] "$70,000 to $79,999"                                             
+[24] "$80,000 to $89,999"                                             
+[25] "$90,000 to $99,999"                                             
+[26] "$100,000 and over"                                              
+[27] "$100,000 to $149,999"                                           
+[28] "$150,000 and over"                                              
+[29] "No certificate, diploma or degree"                              
+[30] "High (secondary) school diploma or equivalency certificate"     
+[31] "Postsecondary certificate or diploma below bachelor level"      
+[32] "Apprenticeship or trades certificate or diploma"                
+[33] "Non-apprenticeship trades certificate or diploma"               
+[34] "College, CEGEP or other non-university certificate or diploma"  
+[35] "University certificate or diploma below bachelor level"         
+[36] "Bachelor's degree"                                              
+[37] "University certificate or diploma above bachelor level"         
+[38] "Degree in medicine, dentistry, veterinary medicine or optometry"
+[39] "Master's degree"                                                
+[40] "Earned doctorate"                                               
+[41] "Total - language"                                               
+[42] "English only"                                                   
+[43] "French only"                                                    
+[44] "English and French"                                             
+[45] "Neither English nor French"
+ChatGPT said:
+ChatGPT
+It looks like your Neighbourhood Name column includes several entries that are not just neighborhood names but also totals and categories, which is why your tests are failing.
+
+Suggested Adjustments for Your Tests
+Update the Categories for Visible Minorities: Since you have an entry "Total - visible minority" that doesn’t belong in the visible minority category, you should only check the actual categories.
+
+Check the Index Ranges: Ensure that you adjust the ranges in your tests so they match the unique values printed.
+
+Revised Test Code Example
+Here’s how you can modify your test code:
+
+r
+Copy code
+test_that("Neighborhood Data Tests", {
+  
+  # Load necessary libraries
+  library(testthat)
+  library(readr)
+  
+  # Load neighborhood data
+  analysis_data <- read_csv("inputs/data/analysis_data/neighborhood_analysis_data.csv")
+  
+  # Test if the dataset has 45 entries
+  expect_equal(nrow(analysis_data), 45)
+  
+  # Test if the 'Neighbourhood Name' contains only specific neighborhoods
+  expect_true(all(analysis_data$`Neighbourhood Name` %in% c('Rosedale-Moore Park', 'Downtown Yonge East')))
+  
+  # Test if the visible minority categories include expected groups
+  visible_minority_categories <- c("South Asian", "Chinese", "Black", "Filipino", "Arab", 
+                                    "Latin American", "Southeast Asian", "West Asian", 
+                                    "Korean", "Japanese", "Multiple visible minorities", 
+                                    "Not a visible minority")
+  expect_true(all(analysis_data$`Neighbourhood Name`[3:14] %in% visible_minority_categories))
+  
+  # Test if income categories are within expected ranges
+  income_categories <- c("Under $10,000 (including loss)", "$10,000 to $19,999", 
+                         "$20,000 to $29,999", "$30,000 to $39,999", 
+                         "$40,000 to $49,999", "$50,000 to $59,999", 
+                         "$60,000 to $69,999", "$70,000 to $79,999", 
+                         "$80,000 to $89,999", "$90,000 to $99,999", 
+                         "$100,000 and over", "$100,000 to $149,999", 
+                         "$150,000 and over")
+  expect_true(all(analysis_data$`Neighbourhood Name`[16:28] %in% income_categories))
+  
+  # Test if education categories are as expected
+  education_categories <- c("No certificate, diploma or degree", 
+                            "High (secondary) school diploma or equivalency certificate", 
+                            "Postsecondary certificate or diploma below bachelor level", 
+                            "Apprenticeship or trades certificate or diploma", 
+                            "Non-apprenticeship trades certificate or diploma", 
+                            "College, CEGEP or other non-university certificate or diploma", 
+                            "University certificate or diploma below bachelor level", 
+                            "Bachelor's degree", "University certificate or diploma above bachelor level", 
+                            "Degree in medicine, dentistry, veterinary medicine or optometry", 
+                            "Master's degree", "Earned doctorate")
+  expect_true(all(analysis_data$`Neighbourhood Name`[29:40] %in% education_categories))
+  
+  # Test if 'Knowledge of official languages' contains correct values
+  language_categories <- c("Total - language", "English only", "French only", 
+                           "English and French", "Neither English nor French")
+  expect_true(all(analysis_data$`Neighbourhood Name`[41:45] %in% language_categories))
+  
+  # Test if all values are numeric (except for the `Neighbourhood Name` column)
+  expect_true(all(sapply(analysis_data[, -1], is.numeric)))
+})
+Key Adjustments
+Adjust the ranges for visible minority, income, education, and language categories based on your unique values.
+Make sure the tests reflect only the expected categories and ignore totals or other irrelevant entries.
+After making these changes, run your tests again to see if they pass. Let me know how it goes!
+
+
+
+
+
+
+You said:
+==> Testing R file using 'testthat'
+
+
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 0 ]
+[ FAIL 0 | WARN 1 | SKIP 0 | PASS 0 ]
+[ FAIL 1 | WARN 1 | SKIP 0 | PASS 0 ]
+
+── Warning ('03-test_data.R:20:3'): Neighborhood Data Tests ────────────────────
+package 'readr' was built under R version 4.2.3
+Backtrace:
+    ▆
+ 1. └─base::library(readr) at 03-test_data.R:20:3
+ 2.   └─base (local) testRversion(pkgInfo, package, pkgpath)
+
+── Error ('03-test_data.R:23:3'): Neighborhood Data Tests ──────────────────────
+Error: 'inputs/data/analysis_data/neighborhood_analysis_data.csv' does not exist in current working directory ('C:/Users/Lexi/Desktop/STA304/neighborhoods_toronto/scripts').
+Backtrace:
+    ▆
+ 1. ├─readr::read_csv("inputs/data/analysis_data/neighborhood_analysis_data.csv") at 03-test_data.R:23:3
+ 2. │ └─vroom::vroom(...)
+ 3. │   └─vroom:::vroom_(...)
+ 4. └─vroom (local) <fn>("inputs/data/analysis_data/neighborhood_analysis_data.csv")
+ 5.   └─vroom:::check_path(path)
+
+[ FAIL 1 | WARN 1 | SKIP 0 | PASS 0 ]
+Warning message:
+package 'testthat' was built under R version 4.2.3 
+
+Test complete
+ChatGPT said:
+ChatGPT
+It seems like your test is failing because the file 'inputs/data/analysis_data/neighborhood_analysis_data.csv' does not exist in your current working directory.
+
+Here are some steps to resolve the issue:
+
+1. Check the File Path:
+Ensure the file neighborhood_analysis_data.csv is located in the directory specified: inputs/data/analysis_data/.
+If it is not in that location, you can move the file there or adjust the file path in your test to the correct location.
+2. Verify the Working Directory:
+Use getwd() in your R script to confirm the current working directory. You can adjust the working directory with setwd() if needed.
+Example:
+
+r
+Copy code
+print(getwd())  # Check current working directory
+setwd("/correct/path/to/your/data/")  # Set working directory if needed
+3. Test the Path Before Running Tests:
+Before running the tests, try reading the file manually outside of the test block to ensure the file path is correct:
+r
+Copy code
+neighborhood_data <- read_csv("inputs/data/analysis_data/neighborhood_analysis_data.csv")
+head(neighborhood_data)
+If the file is successfully read with the correct path, your test should pass once the file issue is resolved.
+
+Let me know how it goes!
+
+
+
+
+
+
+You said:
+> head(analysis_data)
+# A tibble: 0 × 5
+# ℹ 5 variables: Neighbourhood Name <chr>, Total - Visible Minorities <dbl>,
+#   Total - Income <dbl>, Total - Education <dbl>,
+#   Total - Knowledge of Official Languages <dbl>
+> 
+ChatGPT said:
+ChatGPT
+It seems like the analysis_data file was read, but it contains no rows, even though the columns are correctly identified.
+
+Here are a few steps to troubleshoot:
+
+1. Check the CSV File:
+Open the CSV file manually (e.g., in Excel or a text editor) to verify whether the data is present in the file and properly formatted.
+
+2. Verify File Encoding and Format:
+Sometimes the issue could be related to the encoding of the file. Try specifying the encoding when reading the file:
+
+r
+Copy code
+analysis_data <- read_csv("inputs/data/analysis_data/neighborhood_analysis_data.csv", locale = locale(encoding = "UTF-8"))
+3. Inspect the CSV File’s First Rows:
+Sometimes, empty rows or headers might cause issues. If there are extra rows at the start of the file, use skip to ignore them:
+
+r
+Copy code
+analysis_data <- read_csv("inputs/data/analysis_data/neighborhood_analysis_data.csv", skip = 1)
+4. Check for Missing Values:
+If rows are missing due to filtering or summarization, ensure that there was no unintended data loss during processing or cleaning:
+
+r
+Copy code
+print(nrow(analysis_data))  # Check the number of rows
+Once you identify whether the file has data, you can proceed to rerun the tests.
+
+
+
+
+
+
+You said:
+> print(nrow(analysis_data))  # Check the number of rows
+[1] 0
+ChatGPT said:
+ChatGPT
+Since nrow(analysis_data) returned 0, it indicates that the data was not loaded properly, or there is an issue with the content of the CSV file itself. Here are some further troubleshooting steps:
+
+1. Check File Path:
+Ensure that the file path is correct. If the file is located in a different directory, update the path accordingly.
+
+r
+Copy code
+file.exists("inputs/data/analysis_data/neighborhood_analysis_data.csv")
+This will return TRUE if the file exists at the specified location, otherwise FALSE.
+
+2. Check File Content:
+Open the CSV file manually to verify that it contains data and is not empty.
+
+3. Check Data in the CSV File:
+Print the first few lines of the file to verify its content:
+
+r
+Copy code
+file_content <- readLines("inputs/data/analysis_data/neighborhood_analysis_data.csv", n = 10)
+print(file_content)
+This will help you inspect the format of the file and see if any issues are evident, such as misplaced headers, empty rows, or encoding problems.
+
+4. File Format:
+Sometimes, the file might be saved with the .csv extension but in another format (like Excel). Verify that it is indeed a CSV file. You could try opening it in a text editor to see if it is comma-separated.
+
+5. Alternative Read Method:
+If the file has complex formatting or issues, you could try reading the file using read.csv() instead of readr::read_csv() to see if there’s a difference:
+
+r
+Copy code
+analysis_data <- read.csv("inputs/data/analysis_data/neighborhood_analysis_data.csv", stringsAsFactors = FALSE)
+After these steps, let me know the results or if any of these suggestions help clarify the issue.
+
+
+
+
+
+
+You said:
+
+> file.exists("inputs/data/analysis_data/neighborhood_analysis_data.csv")
+[1] TRUE
+ChatGPT said:
+ChatGPT
+Since the file exists but analysis_data still has 0 rows, it could indicate an issue with how the data is being read or formatted. Let's check a few more things:
+
+1. Preview the Data
+Even though the file exists, let's check the actual content of the file by reading and printing the first few rows manually using readLines():
+
+r
+Copy code
+file_content <- readLines("inputs/data/analysis_data/neighborhood_analysis_data.csv", n = 10)
+print(file_content)
+This will give us a direct view of the raw content to check if there’s anything unusual (e.g., empty lines, wrong delimiter).
+
+2. Check for Issues in the CSV Structure
+If the file has extra spaces, misaligned columns, or missing data, this could result in the issue. Sometimes, CSV files use semicolons or tabs as delimiters instead of commas. Try reading the file with sep specified:
+
+r
+Copy code
+analysis_data <- read.csv("inputs/data/analysis_data/neighborhood_analysis_data.csv", sep = ",", stringsAsFactors = FALSE)
+If you find semicolons or tabs in the readLines() output, try:
+
+r
+Copy code
+analysis_data <- read.csv("inputs/data/analysis_data/neighborhood_analysis_data.csv", sep = ";", stringsAsFactors = FALSE)
+3. Check Column Names
+If the CSV file contains strange characters in the header row or extra spaces, this can affect reading. You could try renaming columns directly after loading:
+
+r
+Copy code
+analysis_data <- read_csv("inputs/data/analysis_data/neighborhood_analysis_data.csv", col_names = TRUE)
+colnames(analysis_data) <- trimws(colnames(analysis_data))
+4. Check for Empty Rows or Columns
+In case the dataset has rows that appear empty, you can remove them:
+
+r
+Copy code
+analysis_data <- analysis_data[complete.cases(analysis_data), ]
+These steps should help diagnose and fix the issue causing nrow() to return 0. Let me know what you find after checking the file contents!
+
+
+
+
+
+
+You said:
+> 
+> file_content <- readLines("inputs/data/analysis_data/neighborhood_analysis_data.csv", n = 10)
+> print(file_content)
+ [1] "Neighbourhood Name,Rosedale-Moore Park,Downtown Yonge East"
+ [2] "Total - visible minority,20080,17695"                      
+ [3] "Total visible minority population,4325,10280"              
+ [4] "South Asian,965,2415"                                      
+ [5] "Chinese,1170,2830"                                         
+ [6] "Black,470,1425"                                            
+ [7] "Filipino,255,460"                                          
+ [8] "Arab,145,540"                                              
+ [9] "Latin American,420,535"                                    
+[10] "Southeast Asian,60,290"                                    
+> 
+ChatGPT said:
+ChatGPT
+It looks like your CSV file has neighborhood names as column headers, but you're treating them as rows in your tests and data structure. The first row ("Neighbourhood Name, Rosedale-Moore Park, Downtown Yonge East") indicates that neighborhood names are the column titles, and the actual data starts from the second row onwards.
+
+Here’s how you can fix this:
+
+1. Read the Data Correctly
+Since neighborhood names are in columns, you can treat this as a regular dataframe where each column represents a different neighborhood, and the rows represent categories.
+
+You can load the data like this:
+
+r
+Copy code
+analysis_data <- read_csv("inputs/data/analysis_data/neighborhood_analysis_data.csv")
+
+# Check the structure of the dataset
+print(head(analysis_data))
+2. Modify Your Tests
+You need to adjust your tests to reflect that the neighborhood names are now column headers. For example:
+
+Instead of checking if the "Neighbourhood Name" column contains certain neighborhood names, check if the column names match your expected neighborhoods.
+Here's an example of how to adjust the tests:
+
+r
+Copy code
+test_that("Neighborhood Data Tests", {
+  
+  # Load the data
+  analysis_data <- read_csv("inputs/data/analysis_data/neighborhood_analysis_data.csv")
+  
+  # Test if the dataset has the correct number of columns (2 neighborhoods + 1 category column)
+  expect_equal(ncol(analysis_data), 3)  # "Neighbourhood Name", "Rosedale-Moore Park", "Downtown Yonge East"
+  
+  # Test if the neighborhood names match expected neighborhoods (checking column names now)
+  expect_true(all(colnames(analysis_data)[2:3] %in% c("Rosedale-Moore Park", "Downtown Yonge East")))
+  
+  # Test if the visible minority categories include expected groups (checking row names instead of column values)
+  visible_minority_categories <- c("Total - visible minority", "Total visible minority population", "South Asian", "Chinese", "Black", "Filipino", "Arab", "Latin American", "Southeast Asian", "West Asian", "Korean", "Japanese", "Multiple visible minorities", "Not a visible minority")
+  expect_true(all(analysis_data$`Neighbourhood Name`[1:12] %in% visible_minority_categories))
+  
+  # You can add other tests for income categories, education categories, and languages similarly.
+})
+This approach aligns with the actual structure of your dataset and should work without errors.
+
+
+
+
+
+
+You said:
+can you include tests for income categories, education categories, and languages similarly
+ChatGPT said:
+ChatGPT
+Here’s the updated code that includes tests for the income categories, education categories, and knowledge of official languages:
+
+r
+Copy code
+test_that("Neighborhood Data Tests", {
+  
+  # Load the data
+  analysis_data <- read_csv("inputs/data/analysis_data/neighborhood_analysis_data.csv")
+  
+  # Test if the dataset has the correct number of columns (2 neighborhoods + 1 category column)
+  expect_equal(ncol(analysis_data), 3)  # "Neighbourhood Name", "Rosedale-Moore Park", "Downtown Yonge East"
+  
+  # Test if the neighborhood names match expected neighborhoods (checking column names now)
+  expect_true(all(colnames(analysis_data)[2:3] %in% c("Rosedale-Moore Park", "Downtown Yonge East")))
+  
+  # Test if the visible minority categories include expected groups (checking row names instead of column values)
+  visible_minority_categories <- c("Total - visible minority", "Total visible minority population", "South Asian", "Chinese", "Black", "Filipino", "Arab", "Latin American", "Southeast Asian", "West Asian", "Korean", "Japanese", "Multiple visible minorities", "Not a visible minority")
+  expect_true(all(analysis_data$`Neighbourhood Name`[1:12] %in% visible_minority_categories))
+  
+  # Test if income categories include expected groups
+  income_categories <- c("Under $10,000 (including loss)", "$10,000 to $19,999", "$20,000 to $29,999", "$30,000 to $39,999", "$40,000 to $49,999", "$50,000 to $59,999", "$60,000 to $69,999", "$70,000 to $79,999", "$80,000 to $89,999", "$90,000 to $99,999", "$100,000 and over", "$100,000 to $149,999", "$150,000 and over")
+  expect_true(all(analysis_data$`Neighbourhood Name`[16:28] %in% income_categories))
+  
+  # Test if education categories include expected groups
+  education_categories <- c("No certificate, diploma or degree", "High (secondary) school diploma or equivalency certificate", "Postsecondary certificate or diploma below bachelor level", "Apprenticeship or trades certificate or diploma", "Non-apprenticeship trades certificate or diploma", "College, CEGEP or other non-university certificate or diploma", "University certificate or diploma below bachelor level", "Bachelor's degree", "University certificate or diploma above bachelor level", "Degree in medicine, dentistry, veterinary medicine or optometry", "Master's degree", "Earned doctorate")
+  expect_true(all(analysis_data$`Neighbourhood Name`[29:40] %in% education_categories))
+  
+  # Test if language categories include expected groups
+  language_categories <- c("Total - language", "English only", "French only", "English and French", "Neither English nor French")
+  expect_true(all(analysis_data$`Neighbourhood Name`[41:45] %in% language_categories))
+  
+  # Test if all values are numeric (except for the `Neighbourhood Name` column)
+  expect_true(all(sapply(analysis_data[, -1], is.numeric)))
+
+})
+Key Points:
+Visible minority categories are checked in rows 1 to 12.
+Income categories are checked in rows 16 to 28.
+Education categories are checked in rows 29 to 40.
+Language categories are checked in rows 41 to 45.
+This test setup reflects the structure of your data, with different rows representing categories and the neighborhood names as columns.
+
+
+
+
+
+
+You said:
+this is my updated code: #### Test data ####
+test_that("Neighborhood Data Tests", {
+  
+  
+  # Install libraries 
+  # install.packages("testthat")
+  # install.packages("readr")
+  
+  # Load necessary libraries
+  library(testthat)
+  library(readr)
+  
+  # Load neighborhood data
+  analysis_data <- read_csv("inputs/data/analysis_data/neighborhood_analysis_data.csv", skip = 1)
+  
+  # Test if the dataset has 45 entries
+  expect_equal(nrow(analysis_data), 45)
+  
+  # Test if the dataset has the correct number of columns (2 neighborhoods + 1 category column)
+  expect_equal(ncol(analysis_data), 3)  # "Neighbourhood Name", "Rosedale-Moore Park", "Downtown Yonge East"
+  
+  # Test if the neighborhood names match expected neighborhoods (checking column names now)
+  expect_true(all(colnames(analysis_data)[2:3] %in% c("Rosedale-Moore Park", "Downtown Yonge East")))
+  
+  # Test if the visible minority categories include expected groups (checking row names instead of column values)
+  visible_minority_categories <- c("Total - visible minority", "Total visible minority population", "South Asian", "Chinese", "Black", "Filipino", "Arab", "Latin American", "Southeast Asian", "West Asian", "Korean", "Japanese", "Multiple visible minorities", "Not a visible minority")
+  expect_true(all(analysis_data$Neighbourhood Name[1:12] %in% visible_minority_categories))
+  
+  # Test if income categories include expected groups
+  income_categories <- c("Under $10,000 (including loss)", "$10,000 to $19,999", "$20,000 to $29,999", "$30,000 to $39,999", "$40,000 to $49,999", "$50,000 to $59,999", "$60,000 to $69,999", "$70,000 to $79,999", "$80,000 to $89,999", "$90,000 to $99,999", "$100,000 and over", "$100,000 to $149,999", "$150,000 and over")
+  expect_true(all(analysis_data$Neighbourhood Name[16:28] %in% income_categories))
+  
+  # Test if education categories include expected groups
+  education_categories <- c("No certificate, diploma or degree", "High (secondary) school diploma or equivalency certificate", "Postsecondary certificate or diploma below bachelor level", "Apprenticeship or trades certificate or diploma", "Non-apprenticeship trades certificate or diploma", "College, CEGEP or other non-university certificate or diploma", "University certificate or diploma below bachelor level", "Bachelor's degree", "University certificate or diploma above bachelor level", "Degree in medicine, dentistry, veterinary medicine or optometry", "Master's degree", "Earned doctorate")
+  expect_true(all(analysis_data$Neighbourhood Name[29:40] %in% education_categories))
+  
+  # Test if language categories include expected groups
+  language_categories <- c("Total - language", "English only", "French only", "English and French", "Neither English nor French")
+  expect_true(all(analysis_data$Neighbourhood Name[41:45] %in% language_categories))
+  
+  # Test if all values are numeric (except for the Neighbourhood Name column)
+  expect_true(all(sapply(analysis_data[, -1], is.numeric)))
+
+}) This is the error: ==> Testing R file using 'testthat'
+
+
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 0 ]
+[ FAIL 0 | WARN 1 | SKIP 0 | PASS 0 ]
+[ FAIL 1 | WARN 1 | SKIP 0 | PASS 0 ]
+
+── Warning ('03-test_data.R:20:3'): Neighborhood Data Tests ────────────────────
+package 'readr' was built under R version 4.2.3
+Backtrace:
+    ▆
+ 1. └─base::library(readr) at 03-test_data.R:20:3
+ 2.   └─base (local) testRversion(pkgInfo, package, pkgpath)
+
+── Error ('03-test_data.R:23:3'): Neighborhood Data Tests ──────────────────────
+Error: 'inputs/data/analysis_data/neighborhood_analysis_data.csv' does not exist in current working directory ('C:/Users/Lexi/Desktop/STA304/neighborhoods_toronto/scripts').
+Backtrace:
+    ▆
+ 1. ├─readr::read_csv(...) at 03-test_data.R:23:3
+ 2. │ └─vroom::vroom(...)
+ 3. │   └─vroom:::vroom_(...)
+ 4. └─vroom (local) <fn>("inputs/data/analysis_data/neighborhood_analysis_data.csv")
+ 5.   └─vroom:::check_path(path)
+
+[ FAIL 1 | WARN 1 | SKIP 0 | PASS 0 ]
+Warning message:
+package 'testthat' was built under R version 4.2.3 
+
+Test complete
+ChatGPT said:
+ChatGPT
+The error you're encountering is due to the script not being able to find the file inputs/data/analysis_data/neighborhood_analysis_data.csv in the specified path when you run the tests. However, since you confirmed that the file exists earlier, the issue might be related to the working directory when running the test.
+
+Possible Fixes:
+Set the Working Directory: You need to ensure that the working directory is set correctly. You can explicitly set the working directory in your test file or confirm that the relative path is accurate. Add the following to the top of your script:
+
+r
+Copy code
+setwd("C:/Users/Lexi/Desktop/STA304/neighborhoods_toronto")
+This will ensure that the file is accessed from the correct location.
+
+Check Relative Path: Verify that the relative path inputs/data/analysis_data/neighborhood_analysis_data.csv is correct from where you're running the tests. It might be helpful to use the absolute path for debugging, like:
+
+r
+Copy code
+analysis_data <- read_csv("C:/Users/Lexi/Desktop/STA304/neighborhoods_toronto/inputs/data/analysis_data/neighborhood_analysis_data.csv", skip = 1)
+Debugging the Path: You can print the current working directory to ensure the file path is accurate:
+
+r
+Copy code
+print(getwd())  # To check the current working directory
+Once the working directory issue is resolved, the tests should proceed without the "file not found" error. Let me know if any further adjustments are needed after trying this!
+
+
+
+
+
+
+You said:
+> 
+> print(getwd())  # To check the current working directory
+[1] "C:/Users/Lexi/Desktop/STA304/neighborhoods_toronto"
+> 
+ChatGPT said:
+ChatGPT
+Since the working directory is correctly set to "C:/Users/Lexi/Desktop/STA304/neighborhoods_toronto", and the file exists in the path inputs/data/analysis_data/neighborhood_analysis_data.csv, the issue may be due to how the path is specified in the test script.
+
+Here are a few troubleshooting steps to try:
+
+1. Check for Typos in the Path
+Ensure there are no subtle typos in your file path. You can try explicitly printing the path like this:
+
+r
+Copy code
+file_path <- "inputs/data/analysis_data/neighborhood_analysis_data.csv"
+print(file_path)
+2. Use here::here for Path Management
+The here package helps manage relative paths reliably. You can change the file loading line to:
+
+r
+Copy code
+library(here)
+
+analysis_data <- read_csv(here::here("inputs/data/analysis_data/neighborhood_analysis_data.csv"), skip = 1)
+This ensures the path is handled correctly relative to your working directory.
+
+3. Full Path (For Debugging)
+As a temporary debug step, try using the full path to ensure there is no path issue:
+
+r
+Copy code
+analysis_data <- read_csv("C:/Users/Lexi/Desktop/STA304/neighborhoods_toronto/inputs/data/analysis_data/neighborhood_analysis_data.csv", skip = 1)
+4. Confirm File Permissions
+Ensure that the file is not locked by another process or that your script has permission to read the file.
+
+Once you implement these, rerun the tests and see if the error is resolved.
+
+
+
+
+
+
+You said:
+#### Test data ####
+test_that("Neighborhood Data Tests", {
+  
+  
+  # Install libraries 
+  # install.packages("testthat")
+  # install.packages("readr")
+  install.packages("here")
+  
+  # Load necessary libraries
+  library(testthat)
+  library(readr)
+  library(here)
+  
+  
+  # Load neighborhood data
+  analysis_data <- read_csv(here::here("inputs/data/analysis_data/neighborhood_analysis_data.csv"), skip = 1)
+  
+  
+  # Test if the dataset has 45 entries
+  expect_equal(nrow(analysis_data), 45)
+  
+  # Test if the dataset has the correct number of columns (2 neighborhoods + 1 category column)
+  expect_equal(ncol(analysis_data), 3)  # "Neighbourhood Name", "Rosedale-Moore Park", "Downtown Yonge East"
+  
+  # Test if the neighborhood names match expected neighborhoods (checking column names now)
+  expect_true(all(colnames(analysis_data)[2:3] %in% c("Rosedale-Moore Park", "Downtown Yonge East")))
+  
+  # Test if the visible minority categories include expected groups (checking row names instead of column values)
+  visible_minority_categories <- c("Total - visible minority", "Total visible minority population", "South Asian", "Chinese", "Black", "Filipino", "Arab", "Latin American", "Southeast Asian", "West Asian", "Korean", "Japanese", "Multiple visible minorities", "Not a visible minority")
+  expect_true(all(analysis_data$Neighbourhood Name[1:12] %in% visible_minority_categories))
+  
+  # Test if income categories include expected groups
+  income_categories <- c("Under $10,000 (including loss)", "$10,000 to $19,999", "$20,000 to $29,999", "$30,000 to $39,999", "$40,000 to $49,999", "$50,000 to $59,999", "$60,000 to $69,999", "$70,000 to $79,999", "$80,000 to $89,999", "$90,000 to $99,999", "$100,000 and over", "$100,000 to $149,999", "$150,000 and over")
+  expect_true(all(analysis_data$Neighbourhood Name[16:28] %in% income_categories))
+  
+  # Test if education categories include expected groups
+  education_categories <- c("No certificate, diploma or degree", "High (secondary) school diploma or equivalency certificate", "Postsecondary certificate or diploma below bachelor level", "Apprenticeship or trades certificate or diploma", "Non-apprenticeship trades certificate or diploma", "College, CEGEP or other non-university certificate or diploma", "University certificate or diploma below bachelor level", "Bachelor's degree", "University certificate or diploma above bachelor level", "Degree in medicine, dentistry, veterinary medicine or optometry", "Master's degree", "Earned doctorate")
+  expect_true(all(analysis_data$Neighbourhood Name[29:40] %in% education_categories))
+  
+  # Test if language categories include expected groups
+  language_categories <- c("Total - language", "English only", "French only", "English and French", "Neither English nor French")
+  expect_true(all(analysis_data$Neighbourhood Name[41:45] %in% language_categories))
+  
+  # Test if all values are numeric (except for the Neighbourhood Name column)
+  expect_true(all(sapply(analysis_data[, -1], is.numeric)))
+
+})
+
+running the test:
+==> Testing R file using 'testthat'
+
+
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 0 ]
+[ FAIL 1 | WARN 0 | SKIP 0 | PASS 0 ]
+
+── Error ('03-test_data.R:17:3'): Neighborhood Data Tests ──────────────────────
+Error in contrib.url(repos, "source"): trying to use CRAN without setting a mirror
+Backtrace:
+    ▆
+ 1. └─utils::install.packages("here") at 03-test_data.R:17:3
+ 2.   └─utils::contrib.url(repos, "source")
+
+[ FAIL 1 | WARN 0 | SKIP 0 | PASS 0 ]
+Warning message:
+package 'testthat' was built under R version 4.2.3 
+
+Test complete
+
+2/2
+
+ChatGPT said:
+ChatGPT
+The error you're seeing, trying to use CRAN without setting a mirror, is because the install.packages function requires a CRAN mirror to download the package. However, in a test environment, it's not ideal to install packages directly during the test. This should be handled outside the test file.
+
+Here’s how to resolve the issue:
+
+Remove install.packages from the test script: Installing packages should be done prior to running your tests, not within the test file itself. You can install the here package separately in your R environment with this command:
+
+r
+Copy code
+install.packages("here")
+Remove the install.packages calls from your test code: The test file should only load packages with library() or require() functions. Here’s the updated code:
+
+Updated Test Code (without install.packages)
+r
+Copy code
+#### Test data ####
+test_that("Neighborhood Data Tests", {
+
+  # Load necessary libraries
+  library(testthat)
+  library(readr)
+  library(here)
+  
+  # Load neighborhood data
+  analysis_data <- read_csv(here::here("inputs/data/analysis_data/neighborhood_analysis_data.csv"), skip = 1)
+  
+  # Test if the dataset has 45 entries
+  expect_equal(nrow(analysis_data), 45)
+  
+  # Test if the dataset has the correct number of columns (2 neighborhoods + 1 category column)
+  expect_equal(ncol(analysis_data), 3)  # "Neighbourhood Name", "Rosedale-Moore Park", "Downtown Yonge East"
+  
+  # Test if the neighborhood names match expected neighborhoods (checking column names now)
+  expect_true(all(colnames(analysis_data)[2:3] %in% c("Rosedale-Moore Park", "Downtown Yonge East")))
+  
+  # Test if the visible minority categories include expected groups (checking row names instead of column values)
+  visible_minority_categories <- c("Total - visible minority", "Total visible minority population", "South Asian", "Chinese", "Black", "Filipino", "Arab", "Latin American", "Southeast Asian", "West Asian", "Korean", "Japanese", "Multiple visible minorities", "Not a visible minority")
+  expect_true(all(analysis_data$`Neighbourhood Name`[1:12] %in% visible_minority_categories))
+  
+  # Test if income categories include expected groups
+  income_categories <- c("Under $10,000 (including loss)", "$10,000 to $19,999", "$20,000 to $29,999", "$30,000 to $39,999", "$40,000 to $49,999", "$50,000 to $59,999", "$60,000 to $69,999", "$70,000 to $79,999", "$80,000 to $89,999", "$90,000 to $99,999", "$100,000 and over", "$100,000 to $149,999", "$150,000 and over")
+  expect_true(all(analysis_data$`Neighbourhood Name`[16:28] %in% income_categories))
+  
+  # Test if education categories include expected groups
+  education_categories <- c("No certificate, diploma or degree", "High (secondary) school diploma or equivalency certificate", "Postsecondary certificate or diploma below bachelor level", "Apprenticeship or trades certificate or diploma", "Non-apprenticeship trades certificate or diploma", "College, CEGEP or other non-university certificate or diploma", "University certificate or diploma below bachelor level", "Bachelor's degree", "University certificate or diploma above bachelor level", "Degree in medicine, dentistry, veterinary medicine or optometry", "Master's degree", "Earned doctorate")
+  expect_true(all(analysis_data$`Neighbourhood Name`[29:40] %in% education_categories))
+  
+  # Test if language categories include expected groups
+  language_categories <- c("Total - language", "English only", "French only", "English and French", "Neither English nor French")
+  expect_true(all(analysis_data$`Neighbourhood Name`[41:45] %in% language_categories))
+  
+  # Test if all values are numeric (except for the `Neighbourhood Name` column)
+  expect_true(all(sapply(analysis_data[, -1], is.numeric)))
+
+})
+Next Steps:
+Install the required packages manually: Run the following in your R environment before running the tests:
+
+r
+Copy code
+install.packages("here")
+Run your tests again: After the package is installed, you can rerun the tests and it should work without errors.
+
+
+
+
+
+
+You said:
+#### Test data ####
+test_that("Neighborhood Data Tests", {
+  
+  # Load necessary libraries
+  library(testthat)
+  library(readr)
+  library(here)
+  
+  
+  # Load neighborhood data
+  analysis_data <- read_csv(here::here("inputs/data/analysis_data/neighborhood_analysis_data.csv"), skip = 1)
+  
+  
+  # Test if the dataset has 45 entries
+  expect_equal(nrow(analysis_data), 45)
+  
+  # Test if the dataset has the correct number of columns (2 neighborhoods + 1 category column)
+  expect_equal(ncol(analysis_data), 3)  # "Neighbourhood Name", "Rosedale-Moore Park", "Downtown Yonge East"
+  
+  # Test if the neighborhood names match expected neighborhoods (checking column names now)
+  expect_true(all(colnames(analysis_data)[2:3] %in% c("Rosedale-Moore Park", "Downtown Yonge East")))
+  
+  # Test if the visible minority categories include expected groups (checking row names instead of column values)
+  visible_minority_categories <- c("Total - visible minority", "Total visible minority population", "South Asian", "Chinese", "Black", "Filipino", "Arab", "Latin American", "Southeast Asian", "West Asian", "Korean", "Japanese", "Multiple visible minorities", "Not a visible minority")
+  expect_true(all(analysis_data$Neighbourhood Name[1:12] %in% visible_minority_categories))
+  
+  # Test if income categories include expected groups
+  income_categories <- c("Under $10,000 (including loss)", "$10,000 to $19,999", "$20,000 to $29,999", "$30,000 to $39,999", "$40,000 to $49,999", "$50,000 to $59,999", "$60,000 to $69,999", "$70,000 to $79,999", "$80,000 to $89,999", "$90,000 to $99,999", "$100,000 and over", "$100,000 to $149,999", "$150,000 and over")
+  expect_true(all(analysis_data$Neighbourhood Name[16:28] %in% income_categories))
+  
+  # Test if education categories include expected groups
+  education_categories <- c("No certificate, diploma or degree", "High (secondary) school diploma or equivalency certificate", "Postsecondary certificate or diploma below bachelor level", "Apprenticeship or trades certificate or diploma", "Non-apprenticeship trades certificate or diploma", "College, CEGEP or other non-university certificate or diploma", "University certificate or diploma below bachelor level", "Bachelor's degree", "University certificate or diploma above bachelor level", "Degree in medicine, dentistry, veterinary medicine or optometry", "Master's degree", "Earned doctorate")
+  expect_true(all(analysis_data$Neighbourhood Name[29:40] %in% education_categories))
+  
+  # Test if language categories include expected groups
+  language_categories <- c("Total - language", "English only", "French only", "English and French", "Neither English nor French")
+  expect_true(all(analysis_data$Neighbourhood Name[41:45] %in% language_categories))
+  
+  # Test if all values are numeric (except for the Neighbourhood Name column)
+  expect_true(all(sapply(analysis_data[, -1], is.numeric)))
+
+})
+==> Testing R file using 'testthat'
+
+
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 0 ]
+[ FAIL 0 | WARN 1 | SKIP 0 | PASS 0 ]
+[ FAIL 0 | WARN 2 | SKIP 0 | PASS 0 ]
+[ FAIL 1 | WARN 2 | SKIP 0 | PASS 0 ]
+[ FAIL 1 | WARN 2 | SKIP 0 | PASS 1 ]
+[ FAIL 2 | WARN 2 | SKIP 0 | PASS 1 ]
+[ FAIL 2 | WARN 3 | SKIP 0 | PASS 1 ]
+[ FAIL 2 | WARN 3 | SKIP 0 | PASS 2 ]
+[ FAIL 2 | WARN 4 | SKIP 0 | PASS 2 ]
+[ FAIL 2 | WARN 4 | SKIP 0 | PASS 3 ]
+[ FAIL 2 | WARN 5 | SKIP 0 | PASS 3 ]
+[ FAIL 2 | WARN 5 | SKIP 0 | PASS 4 ]
+[ FAIL 2 | WARN 6 | SKIP 0 | PASS 4 ]
+[ FAIL 2 | WARN 6 | SKIP 0 | PASS 5 ]
+[ FAIL 2 | WARN 6 | SKIP 0 | PASS 6 ]
+
+── Warning ('03-test_data.R:15:3'): Neighborhood Data Tests ────────────────────
+package 'readr' was built under R version 4.2.3
+Backtrace:
+    ▆
+ 1. └─base::library(readr) at 03-test_data.R:15:3
+ 2.   └─base (local) testRversion(pkgInfo, package, pkgpath)
+
+── Warning ('03-test_data.R:16:3'): Neighborhood Data Tests ────────────────────
+package 'here' was built under R version 4.2.3
+Backtrace:
+    ▆
+ 1. └─base::library(here) at 03-test_data.R:16:3
+ 2.   └─base (local) testRversion(pkgInfo, package, pkgpath)
+
+── Failure ('03-test_data.R:24:3'): Neighborhood Data Tests ────────────────────
+nrow(analysis_data) not equal to 45.
+1/1 mismatches
+[1] 44 - 45 == -1
+
+── Failure ('03-test_data.R:30:3'): Neighborhood Data Tests ────────────────────
+all(...) is not TRUE
+
+actual:   FALSE
+expected: TRUE 
+
+── Warning ('03-test_data.R:34:3'): Neighborhood Data Tests ────────────────────
+Unknown or uninitialised column: Neighbourhood Name.
+Backtrace:
+    ▆
+ 1. ├─testthat::expect_true(...) at 03-test_data.R:34:3
+ 2. │ └─testthat::quasi_label(enquo(object), label, arg = "object")
+ 3. │   └─rlang::eval_bare(expr, quo_get_env(quo))
+ 4. ├─analysis_data$Neighbourhood Name[1:12] %in% ...
+ 5. ├─analysis_data$Neighbourhood Name
+ 6. └─tibble:::$.tbl_df(analysis_data, Neighbourhood Name)
+
+── Warning ('03-test_data.R:38:3'): Neighborhood Data Tests ────────────────────
+Unknown or uninitialised column: Neighbourhood Name.
+Backtrace:
+    ▆
+ 1. ├─testthat::expect_true(...) at 03-test_data.R:38:3
+ 2. │ └─testthat::quasi_label(enquo(object), label, arg = "object")
+ 3. │   └─rlang::eval_bare(expr, quo_get_env(quo))
+ 4. ├─analysis_data$Neighbourhood Name[16:28] %in% ...
+ 5. ├─analysis_data$Neighbourhood Name
+ 6. └─tibble:::$.tbl_df(analysis_data, Neighbourhood Name)
+
+── Warning ('03-test_data.R:42:3'): Neighborhood Data Tests ────────────────────
+Unknown or uninitialised column: Neighbourhood Name.
+Backtrace:
+    ▆
+ 1. ├─testthat::expect_true(...) at 03-test_data.R:42:3
+ 2. │ └─testthat::quasi_label(enquo(object), label, arg = "object")
+ 3. │   └─rlang::eval_bare(expr, quo_get_env(quo))
+ 4. ├─analysis_data$Neighbourhood Name[29:40] %in% ...
+ 5. ├─analysis_data$Neighbourhood Name
+ 6. └─tibble:::$.tbl_df(analysis_data, Neighbourhood Name)
+
+── Warning ('03-test_data.R:46:3'): Neighborhood Data Tests ────────────────────
+Unknown or uninitialised column: Neighbourhood Name.
+Backtrace:
+    ▆
+ 1. ├─testthat::expect_true(...) at 03-test_data.R:46:3
+ 2. │ └─testthat::quasi_label(enquo(object), label, arg = "object")
+ 3. │   └─rlang::eval_bare(expr, quo_get_env(quo))
+ 4. ├─analysis_data$Neighbourhood Name[41:45] %in% ...
+ 5. ├─analysis_data$Neighbourhood Name
+ 6. └─tibble:::$.tbl_df(analysis_data, Neighbourhood Name)
+
+[ FAIL 2 | WARN 6 | SKIP 0 | PASS 6 ]
+Warning message:
+package 'testthat' was built under R version 4.2.3 
+
+Test complete
+ChatGPT said:
+It looks like you encountered a few issues with your tests. Let’s address them step by step:
+
+Row Count Failure:
+
+The test for row count failed because nrow(analysis_data) returned 44 instead of the expected 45. This could be due to an issue with how the data is being read (e.g., missing rows or incorrect parsing). Check the CSV file to confirm that it indeed has 45 rows of data after the first row.
+Unknown Column Warning:
+
+The warnings about the unknown column Neighbourhood Name suggest that the column names in your data frame might not match the expected names exactly. You can inspect the actual column names using colnames(analysis_data) after loading the data.
+Debugging Steps
+Check Loaded Data: After loading the data, add a print statement to see the structure of your analysis_data:
+
+r
+Copy code
+print(colnames(analysis_data))
+print(nrow(analysis_data))
+Adjust Tests Based on Actual Data: Once you know the actual column names and the number of rows, you can adjust your tests accordingly.
+
+Example Debugging Code
+You might temporarily modify your test code like this to include debugging outputs:
+
+r
+Copy code
+test_that("Neighborhood Data Tests", {
+  
+  # Load necessary libraries
+  library(testthat)
+  library(readr)
+  library(here)
+  
+  # Load neighborhood data
+  analysis_data <- read_csv(here::here("inputs/data/analysis_data/neighborhood_analysis_data.csv"), skip = 1)
+  
+  # Debugging output
+  print(colnames(analysis_data))
+  print(nrow(analysis_data))
+  
+  # Test if the dataset has 45 entries
+  expect_equal(nrow(analysis_data), 45)
+  
+  # Test if the dataset has the correct number of columns (adjust if necessary)
+  expect_equal(ncol(analysis_data), 3)  # Adjust if needed
+  
+  # ... (rest of your tests)
+
+})
+Next Steps
+Run the modified test to see what the actual column names and row count are.
+Adjust the tests based on the output. If the number of rows or column names differ from what you expect, update your assertions accordingly.
+Remove the debugging print statements once you identify and fix the issues.
+Let me know what you find after checking the data!
+
+
+
+
+
+
+You said:
+what does this mean? ==> Testing R file using 'testthat'
+
+
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 0 ]Error in parse(con, n = -1, srcfile = srcfile, encoding = "UTF-8") : 
+  03-test_data.R:39:47: unexpected symbol
+38: nority population", "South Asian", "Chinese", "Black", "Filipino", "Arab", "Latin American", "Southeast Asian", "West Asian", "Korean", "Japanese", "Multiple visible minorities", "Not a visibl
+39:   expect_true(all(analysis_data$Neighbourhood Name
+                                                  ^
+Calls: <Anonymous> ... doTryCatch -> lapply -> FUN -> source_file -> parse
+In addition: Warning message:
+package 'testthat' was built under R version 4.2.3 
+Execution halted
+
+Exited with status 1.
+ChatGPT said:
+ChatGPT
+The error message you're seeing indicates a syntax issue in your code. Specifically, the error occurs because you're trying to reference the column Neighbourhood Name incorrectly. In R, if a column name has spaces, you should either use backticks around the name or use the [[ operator.
+
+Here's how to fix it:
+Using Backticks: Surround the column name with backticks to handle spaces correctly.
+
+r
+Copy code
+expect_true(all(analysis_data$`Neighbourhood Name`[1:12] %in% visible_minority_categories))
+Using the [[ Operator: You can also use the [[ operator to access the column without backticks:
+
+r
+Copy code
+expect_true(all(analysis_data[["Neighbourhood Name"]][1:12] %in% visible_minority_categories))
+Corrected Example
+Here's the relevant part of your test code with the necessary corrections:
+
+r
+Copy code
+# Test if the visible minority categories include expected groups
+expect_true(all(analysis_data$`Neighbourhood Name`[1:12] %in% visible_minority_categories))
+
+# Test if income categories include expected groups
+expect_true(all(analysis_data$`Neighbourhood Name`[16:28] %in% income_categories))
+
+# Test if education categories include expected groups
+expect_true(all(analysis_data$`Neighbourhood Name`[29:40] %in% education_categories))
+
+# Test if language categories include expected groups
+expect_true(all(analysis_data$`Neighbourhood Name`[41:45] %in% language_categories))
+Next Steps
+Make these adjustments and then run your tests again.
+If you encounter any further issues, check for other instances where you might have similar syntax problems.
+Let me know if you need more help!
+
+
+
+
+
+
+You said:
+##### Preamble ####
+# Purpose: Tests the cleaned dataset
+# Author: Lexi Knight
+# Date: 28 March 2024
+# Contact: lexi.knight@mail.utoronto.ca
+# License: MIT
+# Pre-requisites: follow 01-download_data.R and run 02-data_cleaning.R in scripts in order to obtain raw and cleaned data. 
+
+
+#### Test data ####
+test_that("Neighborhood Data Tests", {
+  
+  
+  # Install libraries 
+  # install.packages("testthat")
+  # install.packages("readr")
+  install.packages("here")
+  
+  # Load necessary libraries
+  library(testthat)
+  library(readr)
+  library(here)
+  
+  
+  # Load neighborhood data
+  analysis_data <- read_csv(here::here("inputs/data/analysis_data/neighborhood_analysis_data.csv"), skip = 1)
+  
+  # Test if the dataset has 45 entries
+  expect_equal(nrow(analysis_data), 45)
+  
+  # Test if the dataset has the correct number of columns (2 neighborhoods + 1 category column)
+  expect_equal(ncol(analysis_data), 3)  # "Neighbourhood Name", "Rosedale-Moore Park", "Downtown Yonge East"
+  
+  # Test if the neighborhood names match expected neighborhoods (checking column names now)
+  expect_true(all(colnames(analysis_data)[2:3] %in% c("Rosedale-Moore Park", "Downtown Yonge East")))
+  
+  # Test if the visible minority categories include expected groups
+  expect_true(all(analysis_data$Neighbourhood Name[1:12] %in% visible_minority_categories))
+  
+  # Test if income categories include expected groups
+  expect_true(all(analysis_data$Neighbourhood Name[16:28] %in% income_categories))
+  
+  # Test if education categories include expected groups
+  expect_true(all(analysis_data$Neighbourhood Name[29:40] %in% education_categories))
+  
+  # Test if language categories include expected groups
+  expect_true(all(analysis_data$Neighbourhood Name[41:45] %in% language_categories))
+  
+  # Test if all values are numeric (except for the Neighbourhood Name column)
+  expect_true(all(sapply(analysis_data[, -1], is.numeric)))
+
+}) that is my updated code, this is the result of running the test, can you tell me which test is the issue?  ==> Testing R file using 'testthat'
+
+
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 0 ]
+[ FAIL 1 | WARN 0 | SKIP 0 | PASS 0 ]
+
+── Error ('03-test_data.R:17:3'): Neighborhood Data Tests ──────────────────────
+Error in contrib.url(repos, "source"): trying to use CRAN without setting a mirror
+Backtrace:
+    ▆
+ 1. └─utils::install.packages("here") at 03-test_data.R:17:3
+ 2.   └─utils::contrib.url(repos, "source")
+
+[ FAIL 1 | WARN 0 | SKIP 0 | PASS 0 ]
+Warning message:
+package 'testthat' was built under R version 4.2.3 
+
+Test complete
+ChatGPT said:
+ChatGPT
+The error message indicates that the test is failing because it's trying to install the here package without a CRAN mirror being set up. The installation line install.packages("here") is causing the issue. Since you're likely running tests where the package should already be installed, you should remove the installation line from your test code.
+
+Here's how to fix it:
+Remove the Installation Line: Just remove or comment out the line that installs the here package.
+Updated Code
+Here's your updated test code without the installation line:
+
+r
+Copy code
+##### Preamble ####
+# Purpose: Tests the cleaned dataset
+# Author: Lexi Knight
+# Date: 28 March 2024
+# Contact: lexi.knight@mail.utoronto.ca
+# License: MIT
+# Pre-requisites: follow 01-download_data.R and run 02-data_cleaning.R in scripts in order to obtain raw and cleaned data. 
+
+#### Test data ####
+test_that("Neighborhood Data Tests", {
+  
+  # Load necessary libraries
+  library(testthat)
+  library(readr)
+  library(here)
+  
+  # Load neighborhood data
+  analysis_data <- read_csv(here::here("inputs/data/analysis_data/neighborhood_analysis_data.csv"), skip = 1)
+  
+  # Test if the dataset has 45 entries
+  expect_equal(nrow(analysis_data), 45)
+  
+  # Test if the dataset has the correct number of columns (2 neighborhoods + 1 category column)
+  expect_equal(ncol(analysis_data), 3)  # "Neighbourhood Name", "Rosedale-Moore Park", "Downtown Yonge East"
+  
+  # Test if the neighborhood names match expected neighborhoods (checking column names now)
+  expect_true(all(colnames(analysis_data)[2:3] %in% c("Rosedale-Moore Park", "Downtown Yonge East")))
+  
+  # Test if the visible minority categories include expected groups
+  expect_true(all(analysis_data$`Neighbourhood Name`[1:12] %in% visible_minority_categories))
+  
+  # Test if income categories include expected groups
+  expect_true(all(analysis_data$`Neighbourhood Name`[16:28] %in% income_categories))
+  
+  # Test if education categories include expected groups
+  expect_true(all(analysis_data$`Neighbourhood Name`[29:40] %in% education_categories))
+  
+  # Test if language categories include expected groups
+  expect_true(all(analysis_data$`Neighbourhood Name`[41:45] %in% language_categories))
+  
+  # Test if all values are numeric (except for the `Neighbourhood Name` column)
+  expect_true(all(sapply(analysis_data[, -1], is.numeric)))
+
+})
+After Making the Changes
+Run the tests again. If the here package is already installed, it should work without errors.
+If you still encounter failures, let me know the specific test that's failing, and we can troubleshoot further!
+
+
+
+
+
+You said:
+i installed and loaded here in the console prior. but this is the outcome ==> Testing R file using 'testthat'
+
+
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 0 ]
+[ FAIL 0 | WARN 1 | SKIP 0 | PASS 0 ]
+[ FAIL 0 | WARN 2 | SKIP 0 | PASS 0 ]
+[ FAIL 1 | WARN 2 | SKIP 0 | PASS 0 ]
+[ FAIL 1 | WARN 2 | SKIP 0 | PASS 1 ]
+[ FAIL 2 | WARN 2 | SKIP 0 | PASS 1 ]
+[ FAIL 2 | WARN 3 | SKIP 0 | PASS 1 ]
+[ FAIL 3 | WARN 3 | SKIP 0 | PASS 1 ]
+
+── Warning ('03-test_data.R:15:3'): Neighborhood Data Tests ────────────────────
+package 'readr' was built under R version 4.2.3
+Backtrace:
+    ▆
+ 1. └─base::library(readr) at 03-test_data.R:15:3
+ 2.   └─base (local) testRversion(pkgInfo, package, pkgpath)
+
+── Warning ('03-test_data.R:16:3'): Neighborhood Data Tests ────────────────────
+package 'here' was built under R version 4.2.3
+Backtrace:
+    ▆
+ 1. └─base::library(here) at 03-test_data.R:16:3
+ 2.   └─base (local) testRversion(pkgInfo, package, pkgpath)
+
+── Failure ('03-test_data.R:22:3'): Neighborhood Data Tests ────────────────────
+nrow(analysis_data) not equal to 45.
+1/1 mismatches
+[1] 44 - 45 == -1
+
+── Failure ('03-test_data.R:28:3'): Neighborhood Data Tests ────────────────────
+all(...) is not TRUE
+
+actual:   FALSE
+expected: TRUE 
+
+── Warning ('03-test_data.R:31:3'): Neighborhood Data Tests ────────────────────
+Unknown or uninitialised column: Neighbourhood Name.
+Backtrace:
+    ▆
+ 1. ├─testthat::expect_true(...) at 03-test_data.R:31:3
+ 2. │ └─testthat::quasi_label(enquo(object), label, arg = "object")
+ 3. │   └─rlang::eval_bare(expr, quo_get_env(quo))
+ 4. ├─analysis_data$Neighbourhood Name[1:12] %in% ...
+ 5. ├─analysis_data$Neighbourhood Name
+ 6. └─tibble:::$.tbl_df(analysis_data, Neighbourhood Name)
+
+── Error ('03-test_data.R:31:3'): Neighborhood Data Tests ──────────────────────
+Error in analysis_data$Neighbourhood Name[1:12] %in% visible_minority_categories: object 'visible_minority_categories' not found
+Backtrace:
+    ▆
+ 1. ├─testthat::expect_true(...) at 03-test_data.R:31:3
+ 2. │ └─testthat::quasi_label(enquo(object), label, arg = "object")
+ 3. │   └─rlang::eval_bare(expr, quo_get_env(quo))
+ 4. └─analysis_data$Neighbourhood Name[1:12] %in% ...
+
+[ FAIL 3 | WARN 3 | SKIP 0 | PASS 1 ]
+Warning message:
+package 'testthat' was built under R version 4.2.3 
+
+Test complete
+ChatGPT said:
+ChatGPT
+From the output, it looks like you have a few issues in your test script:
+
+Row Count Mismatch:
+
+The test is expecting analysis_data to have 45 rows, but it only has 44. You need to check your data and see why there’s a discrepancy.
+Undefined Variables:
+
+The error object 'visible_minority_categories' not found indicates that you haven't defined this variable in your test script. You need to define it (along with income_categories, education_categories, and language_categories) before using them in the tests.
+Unknown Column:
+
+The warning about the unknown column Neighbourhood Name suggests that the column name might not be exactly as you expect it. Check your dataset to see the actual names and adjust the code accordingly.
+Steps to Fix:
+Define All Categories: Ensure you define all the expected categories at the beginning of your test script. Here’s an example of how to do this:
+r
+Copy code
+# Define expected categories
+visible_minority_categories <- c("Total - visible minority", "Total visible minority population", "South Asian", "Chinese", "Black", "Filipino", "Arab", "Latin American", "Southeast Asian", "West Asian", "Korean", "Japanese", "Multiple visible minorities", "Not a visible minority")
+
+income_categories <- c("Under $10,000 (including loss)", "$10,000 to $19,999", "$20,000 to $29,999", "$30,000 to $39,999", "$40,000 to $49,999", "$50,000 to $59,999", "$60,000 to $69,999", "$70,000 to $79,999", "$80,000 to $89,999", "$90,000 to $99,999", "$100,000 and over", "$100,000 to $149,999", "$150,000 and over")
+
+education_categories <- c("No certificate, diploma or degree", "High (secondary) school diploma or equivalency certificate", "Postsecondary certificate or diploma below bachelor level", "Apprenticeship or trades certificate or diploma", "Non-apprenticeship trades certificate or diploma", "College, CEGEP or other non-university certificate or diploma", "University certificate or diploma below bachelor level", "Bachelor's degree", "University certificate or diploma above bachelor level", "Degree in medicine, dentistry, veterinary medicine or optometry", "Master's degree", "Earned doctorate")
+
+language_categories <- c("Total - language", "English only", "French only", "English and French", "Neither English nor French")
+Check the Data: After loading analysis_data, you can print it or check its structure using str(analysis_data) to verify the column names and the number of rows.
+
+Update Your Tests: If the column name is slightly different, adjust it in your tests.
+
+Example Updated Test Code:
+Here’s how your test script might look after these changes:
+
+r
+Copy code
+##### Preamble ####
+# Purpose: Tests the cleaned dataset
+# Author: Lexi Knight
+# Date: 28 March 2024
+# Contact: lexi.knight@mail.utoronto.ca
+# License: MIT
+# Pre-requisites: follow 01-download_data.R and run 02-data_cleaning.R in scripts in order to obtain raw and cleaned data. 
+
+#### Test data ####
+test_that("Neighborhood Data Tests", {
+  
+  # Load necessary libraries
+  library(testthat)
+  library(readr)
+  library(here)
+  
+  # Define expected categories
+  visible_minority_categories <- c("Total - visible minority", "Total visible minority population", "South Asian", "Chinese", "Black", "Filipino", "Arab", "Latin American", "Southeast Asian", "West Asian", "Korean", "Japanese", "Multiple visible minorities", "Not a visible minority")
+  income_categories <- c("Under $10,000 (including loss)", "$10,000 to $19,999", "$20,000 to $29,999", "$30,000 to $39,999", "$40,000 to $49,999", "$50,000 to $59,999", "$60,000 to $69,999", "$70,000 to $79,999", "$80,000 to $89,999", "$90,000 to $99,999", "$100,000 and over", "$100,000 to $149,999", "$150,000 and over")
+  education_categories <- c("No certificate, diploma or degree", "High (secondary) school diploma or equivalency certificate", "Postsecondary certificate or diploma below bachelor level", "Apprenticeship or trades certificate or diploma", "Non-apprenticeship trades certificate or diploma", "College, CEGEP or other non-university certificate or diploma", "University certificate or diploma below bachelor level", "Bachelor's degree", "University certificate or diploma above bachelor level", "Degree in medicine, dentistry, veterinary medicine or optometry", "Master's degree", "Earned doctorate")
+  language_categories <- c("Total - language", "English only", "French only", "English and French", "Neither English nor French")
+  
+  # Load neighborhood data
+  analysis_data <- read_csv(here::here("inputs/data/analysis_data/neighborhood_analysis_data.csv"), skip = 1)
+  
+  # Check structure of data
+  str(analysis_data)
+  
+  # Test if the dataset has 45 entries
+  expect_equal(nrow(analysis_data), 45)
+  
+  # Test if the dataset has the correct number of columns (2 neighborhoods + 1 category column)
+  expect_equal(ncol(analysis_data), 3)  # Adjust this based on actual column count
+  
+  # Test if the neighborhood names match expected neighborhoods (checking column names now)
+  expect_true(all(colnames(analysis_data)[2:3] %in% c("Rosedale-Moore Park", "Downtown Yonge East")))
+  
+  # Test if the visible minority categories include expected groups
+  expect_true(all(analysis_data$`Neighbourhood Name`[1:12] %in% visible_minority_categories))
+  
+  # Test if income categories include expected groups
+  expect_true(all(analysis_data$`Neighbourhood Name`[16:28] %in% income_categories))
+  
+  # Test if education categories include expected groups
+  expect_true(all(analysis_data$`Neighbourhood Name`[29:40] %in% education_categories))
+  
+  # Test if language categories include expected groups
+  expect_true(all(analysis_data$`Neighbourhood Name`[41:45] %in% language_categories))
+  
+  # Test if all values are numeric (except for the `Neighbourhood Name` column)
+  expect_true(all(sapply(analysis_data[, -1], is.numeric)))
+
+})
+After making these adjustments, run your tests again and let me know if any issues persist!
+
+
