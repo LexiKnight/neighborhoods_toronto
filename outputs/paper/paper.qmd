@@ -33,6 +33,167 @@ The remainder of this paper is structured as follows. First, the methods used to
 
 # Data {#sec-data}
 
+```{r}
+
+# install libraries 
+# install.packages("tidyverse")
+# install.packages("dplyr")
+# install.packages("ggplot2")
+# install.packages("here")
+
+# Load necessary libraries
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(here)
+
+# Check if the file exists and load it 
+file_path <- here::here("inputs/data/analysis_data/neighborhood_analysis_data.csv")
+
+if (file.exists(file_path)) {
+  analysis_data <- read_csv(file_path)
+  print("File found and loaded successfully!")
+} else {
+  stop("Error: File not found at the specified path.")
+}
+
+# Reshape the data to long format for easier plotting
+long_data <- analysis_data %>%
+  pivot_longer(cols = -`Neighbourhood Name`, 
+               names_to = "Neighborhood", 
+               values_to = "Value")
+
+
+
+## Graphing visible minority data
+# Define categories
+visible_minority_categories <- c("South Asian", "Chinese", "Black", "Filipino",
+                                 "Arab", "Latin American", "Southeast Asian",
+                                 "West Asian", "Korean", "Japanese",
+                                 "Visible minority, n.i.e.",
+                                 "Multiple visible minorities",
+                                 "Not a visible minority")
+
+# Filter for visible minority categories
+filtered_data <- long_data %>%
+  filter(`Neighbourhood Name` %in% visible_minority_categories)
+
+# Calculate total individuals for each neighborhood
+total_individuals <- filtered_data %>%
+  group_by(Neighborhood) %>%
+  summarize(Total = sum(Value), .groups = "drop")  # Use .groups to avoid grouping issues
+
+# Create the plot with number of individuals
+visible_minorities_plot <- ggplot(filtered_data, aes(x = `Neighbourhood Name`, y = Value, fill = Neighborhood)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Comparison of Visible Minority Categories Between Neighborhoods",
+       x = "Visible Minority Categories",
+       y = "Number of Individuals") +
+  theme_minimal() +
+  scale_fill_manual(values = c("Rosedale-Moore Park" = "lightgreen", "Downtown Yonge East" = "forestgreen")) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_y_continuous(breaks = seq(0, max(filtered_data$Value), by = 2000))  # Adjust 'by' value as needed
+
+# Display the plot
+print(visible_minorities_plot)
+
+
+
+## Graphing income data
+# Define categories
+income_categories <- c("Under $10,000", "$10,000 to $19,999",
+                       "$20,000 to $29,999", "$30,000 to $39,999",
+                       "$40,000 to $49,999", "$50,000 to $59,999",
+                       "$60,000 to $69,999", "$70,000 to $79,999",
+                       "$80,000 to $89,999", "$90,000 to $99,999",
+                       "$100,000 to $149,999", "$150,000 and over")
+
+# Convert the 'Neighbourhood Name' to a factor with specified levels for ordering
+filtered_income_data$`Neighbourhood Name` <- factor(filtered_income_data$`Neighbourhood Name`, levels = income_categories)
+
+# Create the plot with number of individuals for income
+income_plot <- ggplot(filtered_income_data, aes(x = `Neighbourhood Name`, y = Value, fill = Neighborhood)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Comparison of Income Categories Between Neighborhoods",
+       x = "Income Categories",
+       y = "Number of Individuals") +
+  theme_minimal() +
+  scale_fill_manual(values = c("Rosedale-Moore Park" = "magenta", "Downtown Yonge East" = "darkmagenta")) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_y_continuous(breaks = seq(0, max(filtered_income_data$Value), by = 500))  # Adjust 'by' value for more tick marks
+
+# Display the plot
+print(income_plot)
+
+
+
+## Graphing education data
+# Define the ordered education categories
+education_categories <- c("No certificate, diploma or degree",
+                          "High school diploma or equivalency certificate", 
+                          "Postsecondary certificate or diploma",
+                          "Apprenticeship or trades certificate or diploma",
+                          "Non-apprenticeship trades certificate or diploma",
+                          "College, CEGEP or other non-university certificate or diploma",
+                          "University certificate or diploma below bachelor level",
+                          "Bachelor's degree",
+                          "University certificate or diploma above bachelor level",
+                          "Degree in medicine, dentistry, veterinary medicine or optometry",
+                          "Master's degree", "Earned doctorate")
+
+# Filter the long_data for education categories
+filtered_education_data <- long_data %>%
+  filter(`Neighbourhood Name` %in% education_categories)
+
+# Convert 'Neighbourhood Name' to a factor for ordered plotting
+filtered_education_data$`Neighbourhood Name` <- factor(filtered_education_data$`Neighbourhood Name`, levels = education_categories)
+
+# Create the plot with number of individuals for education attainment
+education_plot <- ggplot(filtered_education_data, aes(x = `Neighbourhood Name`, y = Value, fill = Neighborhood)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Comparison of Education Attainment Between Neighborhoods",
+       x = "Education Levels",
+       y = "Number of Individuals") +
+  theme_minimal() +
+  scale_fill_manual(values = c("Rosedale-Moore Park" = "skyblue", "Downtown Yonge East" = "blue")) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_y_continuous(breaks = seq(0, max(filtered_education_data$Value), by = 1000))  # Adjust 'by' value for more tick marks
+
+# Display the plot
+print(education_plot)
+
+
+
+## Graphing knowledge of official language
+# Define the categories for language knowledge
+language_categories <- c("English only", "French only", 
+                         "English and French", "Neither English nor French")
+
+# Filter the long_data for language knowledge categories
+filtered_language_data <- long_data %>%
+  filter(`Neighbourhood Name` %in% language_categories)
+
+# Convert 'Neighbourhood Name' to a factor for ordered plotting
+filtered_language_data$`Neighbourhood Name` <- factor(filtered_language_data$`Neighbourhood Name`, levels = language_categories)
+
+# Create the plot with number of individuals for knowledge of official languages
+language_plot <- ggplot(filtered_language_data, aes(x = `Neighbourhood Name`, y = Value, fill = Neighborhood)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Comparison of Knowledge of Official Languages Between Neighborhoods",
+       x = "Knowledge of Official Languages",
+       y = "Number of Individuals") +
+  theme_minimal() +
+  scale_fill_manual(values = c("Rosedale-Moore Park" = "yellow", "Downtown Yonge East" = "gold")) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_y_continuous(breaks = seq(0, max(filtered_language_data$Value), by = 2000))  # Adjust 'by' value for more tick marks
+
+# Display the plot
+print(language_plot)
+
+
+```
+
+
 Some of our data is of penguins (@fig-bills), from @palmerpenguins.
 
 ```{r}
