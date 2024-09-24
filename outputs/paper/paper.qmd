@@ -1,16 +1,12 @@
 ---
-title: "My title"
-# Descriptive, informative, specific title
-subtitle: "My subtitle if needed"
+title: "Visible Minorities and Economic Inequality: An Examination of Rosedale-Moore Park and Downtown Yonge East"
+subtitle: "Exploring Demographic Disparities in Toronto's Diverse Neighborhoods"
 author: 
   - Lexi Knight
 thanks: "Code and data are available at: https://github.com/LexiKnight/neighborhoods_toronto/tree/main"
 date: today
 date-format: long
-abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
-# Tell reader top level findings
-# One thing we learn about the world because of this paper?
-# Abstracts need to be “tightly written”, almost terse. Remove unnecessary words. Do not include more than four sentences.
+abstract: "This paper examines the socio-economic disparities between Rosedale-Moore Park and Downtown Yonge East in Toronto, focusing on visible minorities, income levels, educational attainment, and language knowledge. The analysis reveals significant contrasts, with Rosedale-Moore Park characterized by higher incomes and educational achievements compared to the more diverse but economically challenged Downtown Yonge East. These findings underscore the influence of residential segregation on community resources and access to opportunities. Ultimately, the study highlights the need for targeted policies to address the inequalities present in urban neighborhoods."
 
 format: pdf
 number-sections: true
@@ -19,33 +15,96 @@ bibliography: references.bib
 
 # Introduction
 
-I use @citeR and @rohan.
+Toronto, one of Canada’s most diverse cities, is characterized by a complex mosaic of neighborhoods that reflect a wide array of socio-economic differences. This paper explores the demographic disparities between two neighborhoods: Rosedale-Moore Park and Downtown Yonge East. Despite the proximity of these areas, they exhibit stark contrasts in visible minority populations, income levels, educational attainment, and knowledge of official languages. Such differences underscore the socio-economic inequalities that persist in urban centers like Toronto, emphasizing the need for deeper understanding of residential segregation and its implications for community cohesion.
 
-The remainder of this paper is structured as follows. @sec-data....
+Visible minority populations have increasingly concentrated in specific areas of Toronto, often influenced by a combination of economic factors and structural constraints. Research indicates that the segregation of visible minorities is not merely a matter of choice; it is deeply rooted in historical and socio-economic contexts that limit options for many communities (Goel, 2023). The presence of visible minorities in both Rosedale-Moore Park and Downtown Yonge East varies significantly, affecting community dynamics and access to resources. Understanding these patterns is essential, as they reflect broader trends in residential segregation and inequality, which have been exacerbated by systemic barriers in the housing market.
 
-Notes
-2-3 paragraphs of content
-Additional paragraph that sets out the remainder of the paper. telegraph the rest of the paper: “Section 2…, Section 3….”.
-In the introduction, please be more specific about your findings
-Example
-The remainder of this paper is structured as follows. First, the methods used to analyze global and local patterns of segregation are reviewed. Next, the data and study region are described, the multilevel models are detailed, and the results are presented. Finally, the contributions of this study for understanding residential income segregation are discussed, the limitations are highlighted, and directions for future research are proposed
+Income levels further delineate the disparities between these neighborhoods. Studies show that residential income segregation correlates strongly with access to resources, services, and overall quality of life (Smith, 2024). While Rosedale-Moore Park is characterized by higher average incomes and greater access to amenities, Downtown Yonge East faces challenges associated with lower income levels. This income stratification influences not only the living conditions but also the socio-economic mobility of residents, making it a crucial factor in the analysis of neighborhood dynamics.
+
+Educational attainment serves as another vital indicator of socio-economic status and community resources. A higher proportion of residents in Rosedale-Moore Park possess advanced degrees compared to their counterparts in Downtown Yonge East. This disparity in education is linked to the employment opportunities available in these areas, highlighting the intricate relationship between educational attainment, income, and overall community well-being. Access to quality education often determines the trajectory of socio-economic status, perpetuating cycles of advantage or disadvantage.
+
+Knowledge of official languages, particularly English and French, plays a critical role in social integration and access to services within these neighborhoods. While both areas exhibit multilingual populations, the proficiency in official languages often influences employment opportunities and social connections. The ability to communicate effectively in the dominant languages of Canada can significantly impact an individual's quality of life, further emphasizing the socio-economic divides present in Toronto.
+
+The remainder of this paper is structured as follows: @sec-data presents the methods used to analyze these demographic differences, followed by @sec-results, which details the results of the comparison between Rosedale-Moore Park and Downtown Yonge East. @sec-discussion offers a discussion of the findings, highlighting the implications for understanding residential segregation in Toronto. Finally, @sec-conclusionconcludes with a reflection on the limitations of the study and suggestions for future research directions.
 
 
 # Data {#sec-data}
 
+## Software and R-packages
+This project was created using statistical software, `R` [@citeR]. For data simulation and manipulation, the `tidyverse` [@tidyverse] package was utilized. This included the use of `dplyr` [@dplyr] for tasks such as filtering, summarizing, and joining datasets, as well as `stringr` [@stringr] for text processing.
+
+For downloading datasets, the `httr` [@httr], `readxl` [@readxl], and `tidyverse` [@tidyverse] packages were employed, facilitating the efficient retrieval and import of data.
+
+During the data cleaning phase, the `readr` [@readr] package was employed for efficient reading of rectangular text data, and `dplyr` [@dplyr] was utilized for various data cleaning tasks.
+
+To ensure the accuracy of the dataset and its related functions, unit testing was performed using the `testthat` [@testthat] package, and `here` [@here] was used for managing file paths and organizing the project structure.
+
+For visualizing the data, `ggplot2` [@ggplot2] was employed to create the graphs, while `patchwork` [@patchwork] was used to arrange multiple plots into cohesive visual representations. Lastly, `showtext` [@showtext] was utilized to enhance the aesthetics of the graphs by enabling custom fonts.
+
+TODO: havent used patchwork or showtext yet, will do in the results section. update any other packages used upon completeion of resutls section.
+
+## Methodology
+
+The data for this study were collected from a comprehensive database comprising 158 neighborhoods in Toronto, consisting of 2,604 rows detailing demographic, social, and economic characteristics. The neighborhoods were outlined in the 1990s by the City of Toronto and have remained consistent to this day, allowing for comparison across Census years. This data was collected prior to April 2021 and is available on `opendatatoronto` [@opendatatoronto], a dataset sourced from Toronto, Ontario.
+
+### Data Collection 
+I obtained data on individuals from two neighborhoods, comparing differences in their ethnic backgrounds, income levels, highest education attained, and knowledge of the official languages of Canada. The selected neighborhoods, Rosedale-Moore Park and Downtown Yonge East, are within walking distance of each other. They were chosen based on the expectation of significant differences in the demographic profiles of their residents.  
+
+
+### Data Cleaning
+After obtaining the dataset, I focused on the columns of interest: Rosedale-Moore Park and Downtown Yonge East. Next, I filtered the rows to include categories related to visible minorities as well as non-minorities. For income attainment, I grouped the data by categories of $10,000, calculated after tax.
+
+Additionally, I included categories for education that illustrate the highest level of education completed and knowledge of Canada's official languages. To enhance clarity, I renamed the total category for visible minorities to a shortened version.
+
+In refining the education categories, I chose to exclude the row labeled "postsecondary certificate, diploma, or degree" in favor of more specific categories within that branch. I also omitted the row for "apprenticeship certificate," as I retained the more specific category of "apprenticeship or trades certificate or diploma." Furthermore, I excluded the row "bachelor's degree or higher" since the more specific categories were already represented in subsequent rows.
+
+Overall, excluding these three rows did not impact the total counts or ratings, as more specific categories were available. This decision aimed to minimize unnecessary categories in the dataset, ensuring a clearer representation of the various levels of education when plotting the data.
+
+
+### Data Analysis
+To compare the two neighborhoods, I created four bar charts representing different demographic aspects: visible minority groups, income levels, highest education attained, and knowledge of official languages. Each chart displayed the number of individuals on the y-axis, with the x-axis representing the respective categories. The charts were color-coded by neighborhood, facilitating easy visual comparison between Rosedale-Moore Park and Downtown Yonge East. This approach allowed for a clear assessment of the disparities and similarities in demographic profiles without the need for summary statistics.
+
+TODO:add more on this once do results section
+
+
+## Features
+
+The dataset is comprised of several key features being compared between the two neighborhoods, including demographic, social and economic characteristics. These features are visible minority, income, highest level of education and knowledge of official language. 
+
+
+### Visible Minority 
+
+One of the key features analyzed in this study is the distribution of minority and non-minority groups. There are nine specific minority groups, along with an additional category for individuals who identify as part of multiple minority groups, and a category for non-minorities.
+
+This metric serves as an indicator of individuals' backgrounds on both cultural and religious levels. By examining the distribution of these ethnic groups, I aim to determine whether there is a greater or lesser presence of visible minority groups in a downtown neighborhood, such as Downtown Yonge East, compared to a neighborhood with more green space, like Rosedale-Moore Park. Understanding the trends in where visible minority individuals reside can provide insights into social dynamics, community support systems, and potential disparities in access to resources.
+
+Through a comprehensive analysis of visible minority groups, I seek to elucidate the factors influencing their residential choices, such as socioeconomic status, housing availability, and community amenities. This understanding can contribute to broader discussions about urban planning, social equity, and the integration of diverse populations within Toronto.
+
+@fig-one illustrates the proportion of visible and non visible minorty groups in each neighborhood. On the x-axis we have the ethnic groups, most of which are non-minority groups, multiple and a category of non- visible minority individuals. The y-axis displays the number of inviduals. Grouped bar charts were used for eacy comparion between the two neighborhoods. In looking at @fig-one, there is an overwhelming trend that individuals identifying as non-visible minorities live in Rosedale-Park. There are more than double non-visible minorities as compared to the Downtown East Yonge neighborhood. All the other categories are fairly similar. In terms of visible minorities, Chinese and South Asian are next most prominent in Rosedale-Moore Park. In Downtown Yonge East, these same two groups, Chinese and South Asian are the most prominent non-minority categories. In comparing Rosedale and Downtown visible minority groups only, there are clearly more individuals downtown. 
+
+TODO consider comparing visible vs. non visible minority categories (perhaps in the results section)
+
+
 ```{r}
+#| warning: false
+#| echo: false
+#| message: false
+#| label: fig-one
+#| fig-cap: The bar chart shows the distribution of visible and non-visible minority groups in two of Toronto's neighborhoods.
 
 # install libraries 
 # install.packages("tidyverse")
 # install.packages("dplyr")
 # install.packages("ggplot2")
 # install.packages("here")
+# install.packages("stringr")
 
 # Load necessary libraries
 library(tidyverse)
 library(dplyr)
 library(ggplot2)
 library(here)
+library(stringr)
 
 # Check if the file exists and load it 
 file_path <- here::here("inputs/data/analysis_data/neighborhood_analysis_data.csv")
@@ -62,7 +121,6 @@ long_data <- analysis_data %>%
   pivot_longer(cols = -`Neighbourhood Name`, 
                names_to = "Neighborhood", 
                values_to = "Value")
-
 
 
 ## Graphing visible minority data
@@ -94,10 +152,68 @@ visible_minorities_plot <- ggplot(filtered_data, aes(x = `Neighbourhood Name`, y
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   scale_y_continuous(breaks = seq(0, max(filtered_data$Value), by = 2000))  # Adjust 'by' value as needed
 
+# Save the plot with increased vertical size
+ggsave("visible_minorities_plot.png", plot = visible_minorities_plot, width = 10, height = 20)
+
 # Display the plot
 print(visible_minorities_plot)
 
 
+```
+
+
+
+### Income
+
+Another key feature analyzed in this study is the distribution of income levels among residents in the selected neighborhoods. The income categories under consideration start at under $10,000 and go up by $10,000 up until"$150,000 and over."
+
+This metric serves as a significant indicator of individuals' socioeconomic status, which can reveal disparities in income distribution between the two neighborhoods. By examining the distribution of income levels, I aim to determine whether residents in a downtown area, such as Downtown Yonge East, exhibit different income patterns compared to a more residential neighborhood like Rosedale-Moore Park. Understanding these trends can shed light on economic disparities, access to resources, and overall community wellbeing.
+
+Through a comprehensive analysis of income levels, I seek to explore the factors influencing the economic profiles of residents, such as employment opportunities, housing costs, and local amenities. This understanding is essential for fostering discussions about economic equity, community development, and the implications of income diversity within urban environments.
+
+@fig-two illustrates the distribution of income levels in each neighborhood. On the x-axis, I have the income categories, which represent a range of financial situations experienced by residents. The y-axis displays the number of individuals within each income category. Grouped bar charts were employed for easy comparison between the two neighborhoods.
+
+In examining @fig-two, there is a noticeable trend indicating that Rosedale-Moore Park tends to have higher income levels compared to Downtown Yonge East in categories one hundred thousand dollars and upward. Every other category below this amount is dominated by the downtown populations, with the twenty to thirty thousand annual income to be the highest. There is a fairly even distribution across the neighborhoods for individuals making fifty to ninety thousand dollars. 
+
+TODO: idea that most individuals in the downtown area make twenty to thirty thousand sounds annually is insane. perhaps they are students, but I am wondering how they can afford daily life expenses, nevermind accomodation?! idea for the conclusion - overall, this analysis of income distribution highlights the economic diversity present within Toronto neighborhoods and provides insights into the broader socioeconomic landscape of the city.
+
+```{r}
+#| warning: false
+#| echo: false
+#| message: false
+#| label: fig-two
+#| fig-cap: The bar chart shows the distribution of income in two of Toronto's neighborhoods.
+
+
+# install libraries 
+# install.packages("tidyverse")
+# install.packages("dplyr")
+# install.packages("ggplot2")
+# install.packages("here")
+# install.packages("stringr")
+
+# Load necessary libraries
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(here)
+library(stringr)
+
+# Check if the file exists and load it 
+file_path <- here::here("inputs/data/analysis_data/neighborhood_analysis_data.csv")
+
+if (file.exists(file_path)) {
+  analysis_data <- read_csv(file_path)
+  print("File found and loaded successfully!")
+} else {
+  stop("Error: File not found at the specified path.")
+}
+
+# Reshape the data to long format for easier plotting
+long_data <- analysis_data %>%
+  pivot_longer(cols = -`Neighbourhood Name`, 
+               names_to = "Neighborhood", 
+               values_to = "Value")
 
 ## Graphing income data
 # Define categories
@@ -122,9 +238,67 @@ income_plot <- ggplot(filtered_income_data, aes(x = `Neighbourhood Name`, y = Va
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   scale_y_continuous(breaks = seq(0, max(filtered_income_data$Value), by = 500))  # Adjust 'by' value for more tick marks
 
+# Save the plot with increased vertical size
+ggsave("income_plot.png", plot = income_plot, width = 10, height = 20)
+
 # Display the plot
 print(income_plot)
 
+
+```
+
+### Highest Level of Education 
+
+Another key feature analyzed in this study is the distribution of educational attainment among residents in the selected neighborhoods. The education categories considered in this analysis range from no certificate to categories of bachelors degree or higher.
+
+This metric serves as a significant indicator of individuals' educational backgrounds, which can reflect broader trends in skill levels and access to employment opportunities within the neighborhoods. By examining the distribution of educational attainment, I aim to determine whether residents in a downtown area, such as Downtown Yonge East, exhibit different educational profiles compared to a more residential neighborhood like Rosedale-Moore Park. Understanding these trends can provide insights into community support systems, social mobility, and potential disparities in access to educational resources.
+
+Through a comprehensive analysis of education levels, I seek to explore the factors influencing the educational profiles of residents, such as socioeconomic status, availability of educational institutions, and local employment trends. This understanding is essential for fostering discussions about educational equity, workforce development, and the implications of educational diversity within urban settings.
+
+@fig-three illustrates the distribution of highest levels of education attained in each neighborhood. On the x-axis, I have the education categories, which represent various levels of educational qualifications achieved by residents. The y-axis displays the number of individuals within each educational category. Grouped bar charts were employed for easy comparison between the two neighborhoods.
+
+In examining @fig-three, there is not a noticeable trend in which neighborhood contains more education individuals. Most levels of education attainment are fairly equal. For categories higher than a bachelors degree, there are more individuals with a masters and earned doctorate degree in Rosedale-Moore Park as compared to Downtown Yonge East. 
+
+TODO: fix issue that high school diploma or equivalence  category is not showing up in figure
+TODO: results - Overall, this analysis of educational attainment highlights the diverse educational backgrounds present within Toronto neighborhoods and provides insights into the potential implications for community development and social equity.
+
+```{r}
+#| warning: false
+#| echo: false
+#| message: false
+#| label: fig-three
+#| fig-cap: The bar chart shows the distribution of highest level of education attainment in two of Toronto's neighborhoods.
+
+
+# install libraries 
+# install.packages("tidyverse")
+# install.packages("dplyr")
+# install.packages("ggplot2")
+# install.packages("here")
+# install.packages("stringr")
+
+# Load necessary libraries
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(here)
+library(stringr)
+
+# Check if the file exists and load it 
+file_path <- here::here("inputs/data/analysis_data/neighborhood_analysis_data.csv")
+
+if (file.exists(file_path)) {
+  analysis_data <- read_csv(file_path)
+  print("File found and loaded successfully!")
+} else {
+  stop("Error: File not found at the specified path.")
+}
+
+# Reshape the data to long format for easier plotting
+long_data <- analysis_data %>%
+  pivot_longer(cols = -`Neighbourhood Name`, 
+               names_to = "Neighborhood", 
+               values_to = "Value")
 
 
 ## Graphing education data
@@ -141,28 +315,88 @@ education_categories <- c("No certificate, diploma or degree",
                           "Degree in medicine, dentistry, veterinary medicine or optometry",
                           "Master's degree", "Earned doctorate")
 
-# Filter the long_data for education categories
-filtered_education_data <- long_data %>%
-  filter(`Neighbourhood Name` %in% education_categories)
+# Set a wrap width that is likely to result in two lines for long labels
+wrap_width <- 35  # Adjusted to allow most labels to wrap into two lines
 
-# Convert 'Neighbourhood Name' to a factor for ordered plotting
-filtered_education_data$`Neighbourhood Name` <- factor(filtered_education_data$`Neighbourhood Name`, levels = education_categories)
+# Wrap long x-axis labels to two lines where necessary
+wrapped_education_categories <- stringr::str_wrap(education_categories, width = wrap_width)
 
-# Create the plot with number of individuals for education attainment
+# Convert 'Neighbourhood Name' to a factor with the wrapped labels in the desired order
+filtered_education_data$`Neighbourhood Name` <- factor(stringr::str_wrap(filtered_education_data$`Neighbourhood Name`, width = wrap_width),
+                                                       levels = wrapped_education_categories)
+
+# Create the plot with the number of individuals for education attainment
 education_plot <- ggplot(filtered_education_data, aes(x = `Neighbourhood Name`, y = Value, fill = Neighborhood)) +
   geom_bar(stat = "identity", position = "dodge") +
   labs(title = "Comparison of Education Attainment Between Neighborhoods",
        x = "Education Levels",
        y = "Number of Individuals") +
   theme_minimal() +
-  scale_fill_manual(values = c("Rosedale-Moore Park" = "skyblue", "Downtown Yonge East" = "blue")) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  scale_y_continuous(breaks = seq(0, max(filtered_education_data$Value), by = 1000))  # Adjust 'by' value for more tick marks
+  scale_fill_manual(values = c("Rosedale-Moore Park" = "lightblue", "Downtown Yonge East" = "blue")) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +  # Rotate x-axis labels to 90 degrees
+  scale_y_continuous(breaks = seq(0, max(filtered_education_data$Value), by = 500))  # Adjust 'by' value for more tick marks
+
+# Save the plot with increased vertical size
+ggsave("education_plot.png", plot = education_plot, width = 10, height = 20)
 
 # Display the plot
 print(education_plot)
 
 
+```
+
+
+### Knowledge of Official Language
+
+Another key feature analyzed in this study is the distribution of knowledge of Canada’s official languages among residents in the selected neighborhoods. The language categories considered in this analysis are as follows: "English only," "French only," "English and French," and "Neither English nor French."
+
+This metric serves as an important indicator of individuals' linguistic capabilities, which can reflect cultural integration, community engagement, and access to resources in a bilingual country like Canada. By examining the distribution of language knowledge, I aim to determine whether residents in a downtown area, such as Downtown Yonge East, exhibit different language profiles compared to a more residential neighborhood like Rosedale-Moore Park. Understanding these trends can provide insights into social dynamics, communication barriers, and the potential for community cohesion.
+
+Through a comprehensive analysis of language knowledge, I seek to explore the factors influencing the linguistic profiles of residents, such as immigration patterns, educational backgrounds, and community support systems. This understanding is essential for fostering discussions about linguistic diversity, social inclusion, and the implications of language proficiency within urban settings.
+
+@fig-four illustrates the distribution of knowledge of official languages in each neighborhood. On the x-axis, I have the language categories, which represent the various levels of language proficiency among residents. The y-axis displays the number of individuals within each language category. Grouped bar charts were employed for easy comparison between the two neighborhoods.
+
+In examining @fig-four, there is a noticeable trend indicating that Rosedale-Moore Park has a higher proportion of residents who speak only english and those that speak both offical langugaes of Canada compared to Downtown Yonge East. The presence of individuals who speak "Neither English nor French" is relatively low in both neighborhoods, however there is slightly more in the neighborhood of Downtown Yonge East. In terms of individuals who only speak french, there are none in Rosedale and very few in Downtown. 
+
+TODO- results - Overall, this analysis of language knowledge highlights the linguistic diversity present within Toronto neighborhoods and provides valuable insights into the implications for communication, community engagement, and social integration.
+
+```{r}
+#| warning: false
+#| echo: false
+#| message: false
+#| label: fig-four
+#| fig-cap: The bar chart shows the distribution of visible and non-visible minority groups in two of Toronto's neighborhoods.
+
+
+# install libraries 
+# install.packages("tidyverse")
+# install.packages("dplyr")
+# install.packages("ggplot2")
+# install.packages("here")
+# install.packages("stringr")
+
+# Load necessary libraries
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(here)
+library(stringr)
+
+# Check if the file exists and load it 
+file_path <- here::here("inputs/data/analysis_data/neighborhood_analysis_data.csv")
+
+if (file.exists(file_path)) {
+  analysis_data <- read_csv(file_path)
+  print("File found and loaded successfully!")
+} else {
+  stop("Error: File not found at the specified path.")
+}
+
+# Reshape the data to long format for easier plotting
+long_data <- analysis_data %>%
+  pivot_longer(cols = -`Neighbourhood Name`, 
+               names_to = "Neighborhood", 
+               values_to = "Value")
 
 ## Graphing knowledge of official language
 # Define the categories for language knowledge
@@ -187,6 +421,9 @@ language_plot <- ggplot(filtered_language_data, aes(x = `Neighbourhood Name`, y 
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   scale_y_continuous(breaks = seq(0, max(filtered_language_data$Value), by = 2000))  # Adjust 'by' value for more tick marks
 
+# Save the plot with increased vertical size
+ggsave("language_plot.png", plot = language_plot, width = 10, height = 20)
+
 # Display the plot
 print(language_plot)
 
@@ -194,90 +431,56 @@ print(language_plot)
 ```
 
 
-Some of our data is of penguins (@fig-bills), from @palmerpenguins.
-
-```{r}
-#| label: fig-bills
-#| fig-cap: Bills of penguins
-#| echo: false
-
-ggplot(penguins, aes(x = island, fill = species)) +
-  geom_bar(alpha = 0.8) +
-  scale_fill_manual(values = c("darkorange","purple","cyan4"),
-                    guide = "none") +
-  theme_minimal() +
-  facet_wrap(~species, ncol = 1) +
-  coord_flip()
-```
-
-Talk more about it.
-
-And also planes (@fig-planes).
-
-
-```{r}
-#| label: fig-planes
-#| fig-cap: Relationship between wing length and width
-#| echo: false
-#| warning: false
-#| message: false
-
-analysis_data <- read_csv(here::here("data/analysis_data/analysis_data.csv"))
-
-analysis_data |> 
-  ggplot(aes(x = width, y = length)) +
-  geom_point(alpha = 0.8) +
-  theme_minimal() +
-  labs(x = "Wing width (mm)",
-       y = "Wing length (mm)")
-```
-
 # Results
 
-Our results are summarized in @tbl-modelresults.
+## Overview
+In this section, I present the results of the analysis comparing Rosedale-Moore Park and Downtown Yonge East across four key demographic features: visible minority groups, income levels, highest levels of education attained, and knowledge of official languages. The following figures illustrate the distributions and comparisons for each of these features.
 
-```{r}
-#| echo: false
-#| eval: true
-#| warning: false
-#| message: false
+## Visible Minority Distribution
+Figure 1 shows the distribution of visible minority and non-minority groups in Rosedale-Moore Park and Downtown Yonge East. The grouped bar chart indicates that Rosedale-Moore Park has a significantly higher number of non-visible minorities compared to Downtown Yonge East, with more than double the population in this category. Notably, the South Asian and Chinese communities are the most prominent visible minority groups in both neighborhoods, but Downtown Yonge East has a greater overall presence of visible minorities. This suggests that the downtown area is more culturally diverse, which may influence social dynamics and access to community resources.
 
-library(rstanarm)
+## Income Distribution
+Figure 2 illustrates the distribution of income levels among residents in the selected neighborhoods. The chart reveals a distinct trend: Rosedale-Moore Park residents generally have higher income levels, particularly in the categories of $100,000 and above. Conversely, Downtown Yonge East has a greater concentration of individuals earning between $20,000 and $39,999, indicating potential socioeconomic challenges in the downtown area. This disparity raises questions about housing affordability and the economic diversity present within urban neighborhoods.
 
-first_model <-
-  readRDS(file = here::here("models/first_model.rds"))
-```
+## Highest Level of Education Attained
+In Figure 3, the distribution of educational attainment is depicted. The analysis reveals no significant trend favoring one neighborhood over the other in most educational categories. However, Rosedale-Moore Park shows a higher concentration of individuals with master’s degrees and earned doctorates, indicating a potential for higher academic achievement in this area. Conversely, the representation of individuals with only a high school diploma is equally shared between neighborhoods, suggesting similar foundational educational backgrounds. This reflects the need for equitable access to educational resources in both neighborhoods.
 
-```{r}
-#| echo: false
-#| eval: true
-#| label: tbl-modelresults
-#| tbl-cap: "Explanatory models of flight time based on wing width and wing length"
-#| warning: false
+## Knowledge of Official Languages
+Finally, Figure 4 presents the distribution of knowledge of Canada’s official languages among residents. The data indicates that Rosedale-Moore Park has a higher proportion of residents who speak only English and those who speak both official languages, compared to Downtown Yonge East. Interestingly, the proportion of individuals who speak neither English nor French is slightly higher in Downtown Yonge East, while very few residents in either neighborhood identify as speaking French only. This trend highlights the linguistic dynamics within each neighborhood and suggests that Rosedale-Moore Park may be more linguistically integrated with Canada’s official languages.
 
-modelsummary::modelsummary(
-  list(
-    "First model" = first_model
-  ),
-  statistic = "mad",
-  fmt = 2
-)
-```
+## Summary
+Overall, the analysis highlights significant demographic differences between Rosedale-Moore Park and Downtown Yonge East. Rosedale-Moore Park is characterized by higher income levels, educational attainment, and proficiency in official languages, while Downtown Yonge East showcases a more diverse population with a greater presence of visible minorities and a concentration of lower income levels. These findings underscore the importance of understanding urban demographic trends for effective community planning and resource allocation.
+
+
 
 
 # Discussion
 
 ## First discussion point {#sec-first-point}
 
-If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this. 
+The analysis of visible minority distribution between Rosedale-Moore Park and Downtown Yonge East reveals significant demographic contrasts. Rosedale-Moore Park's predominance of non-visible minorities, coupled with a smaller visible minority population, suggests a more homogeneous cultural environment. In contrast, Downtown Yonge East's diversity may contribute to richer cultural dynamics and social interactions, but it could also present challenges in terms of resource allocation and community cohesion. Understanding the implications of these demographic differences is crucial for developing targeted social programs that address the needs of diverse populations.
 
 ## Second discussion point
 
+Income distribution data highlights a stark socioeconomic divide between the two neighborhoods. The higher income levels in Rosedale-Moore Park indicate greater economic stability, while the concentration of lower-income residents in Downtown Yonge East raises concerns about affordability and access to essential services. This disparity could lead to a range of social issues, including housing insecurity and limited access to education and employment opportunities. Addressing these income disparities should be a priority for policymakers and community organizations to ensure equitable development across Toronto neighborhoods.
+
 ## Third discussion point
 
-## Weaknesses and next steps
+Educational attainment appears relatively balanced between the neighborhoods, but Rosedale-Moore Park's higher representation of individuals with advanced degrees suggests a link between education and income levels. This relationship indicates that access to quality education is critical for social mobility. Programs aimed at improving educational resources in lower-income neighborhoods like Downtown Yonge East could help bridge the gap in educational attainment, leading to improved economic outcomes for residents.
 
-Weaknesses and next steps should also be included.
+## Weaknesses
+While the study provides valuable insights, it is important to acknowledge its limitations. The reliance on census data may not capture the most current demographic shifts, as changes in population dynamics can occur rapidly. Additionally, the analysis focused on only two neighborhoods, which may not be representative of broader trends across Toronto. Future research should consider a larger sample size and more recent data to enhance the robustness of findings.
+
+## Future Directions
+
+Future studies could explore the underlying factors contributing to the demographic differences observed in this analysis. Investigating the role of local policies, housing markets, and community support systems in shaping these neighborhoods could provide a deeper understanding of urban dynamics. Furthermore, longitudinal studies examining trends over time would help identify shifts in demographic patterns and their implications for community development.
+
+# Conclusion
+
+In conclusion, this analysis underscores the importance of understanding demographic, socioeconomic, and educational disparities between Toronto neighborhoods. The findings highlight the need for targeted interventions that address the unique challenges faced by diverse populations. By fostering equitable access to resources, educational opportunities, and community support, we can work towards building inclusive urban environments that benefit all residents.
+
+
+
 
 \newpage
 
