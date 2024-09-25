@@ -1,3 +1,4 @@
+usethis::git_vaccinate() 
 **/.DS_Store
 .Rproj.user
 .Rhistory

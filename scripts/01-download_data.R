@@ -1,5 +1,5 @@
 #### Preamble ####
-# Purpose: Downloads and saves the data from opendatatoronto
+# Purpose: Downloads and saves the data from opendatatoronto.
 # Author: Lexi Knight
 # Date: 16 September 2024
 # Contact: lexi.knight@mail.utoronto.ca

@@ -1,5 +1,5 @@
 #### Preamble ####
-# Purpose: Simulates... [...UPDATE THIS...]
+# Purpose: Stimulates the economic, social and lingusitic data from OpenDataToronto. 
 # Author: Lexi Knight
 # Date: 16 September 2024
 # Contact: lexi.knight@mail.utoronto.ca
@@ -7,7 +7,6 @@
 # Pre-requisites:none
 
 
-#### Workspace setup ####
 #### Workspace setup ####
 # install packages
 # install.packages("tidyverse")
@@ -20,7 +19,7 @@ library(tidyverse)
 # Set seed for reproducibility
 set.seed(853)
 
-# Number of entries (adjust as necessary for your data size)
+# Number of entries
 num_entries <- 45
 
 # Simulate neighborhood data
@@ -67,8 +66,8 @@ simulated_data <- data.frame(
                               replace = TRUE)
 )
 
-# Show a summary of the simulated data
-summary(simulated_data)
+# Show a summary of the simulated data - as a check
+# summary(simulated_data)
 
 # Save the simulated data
-write_csv(simulated_data, "inputs/data/simulated_neighborhood_data.csv")
+write_csv(simulated_data, "inputs/data/raw_data/simulated_neighborhood_data.csv")

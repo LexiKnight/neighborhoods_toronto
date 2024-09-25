@@ -1,5 +1,5 @@
 ##### Preamble ####
-# Purpose: Tests the cleaned dataset
+# Purpose: Tests the cleaned dataset.
 # Author: Lexi Knight
 # Date: 21 September 2024
 # Contact: lexi.knight@mail.utoronto.ca

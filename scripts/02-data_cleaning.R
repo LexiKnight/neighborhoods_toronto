@@ -27,8 +27,7 @@ colnames(raw_data) <- trimws(colnames(raw_data))
 # Select columns of interest (neighborhoods and row identifiers)
 selected_neighborhoods <- c("Rosedale-Moore Park", "Downtown Yonge East")
 
-# Manually specify the row indices of interest - I am doing this because there
-# are multiple rows with the same names
+# Manually specify the row indices of interest - due to multiple rows with the same names
 visible_minority_categories <- c(1641:1655) 
 income_categories <- c(93:105) 
 education_categories <- c(1982, 1983, 1985:1987, 1989:1990, 1992:1996)
