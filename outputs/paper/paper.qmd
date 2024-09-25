@@ -224,6 +224,10 @@ income_categories <- c("Under $10,000", "$10,000 to $19,999",
                        "$80,000 to $89,999", "$90,000 to $99,999",
                        "$100,000 to $149,999", "$150,000 and over")
 
+# Filter the data for income-related rows
+filtered_income_data <- long_data %>%
+  filter(`Neighbourhood Name` %in% income_categories)
+
 # Convert the 'Neighbourhood Name' to a factor with specified levels for ordering
 filtered_income_data$`Neighbourhood Name` <- factor(filtered_income_data$`Neighbourhood Name`, levels = income_categories)
 
@@ -314,6 +318,10 @@ education_categories <- c("No certificate, diploma or degree",
                           "University certificate or diploma above bachelor level",
                           "Degree in medicine, dentistry, veterinary medicine or optometry",
                           "Master's degree", "Earned doctorate")
+
+# Filter the data for education-related rows
+filtered_education_data <- long_data %>%
+  filter(`Neighbourhood Name` %in% education_categories)
 
 # Set a wrap width that is likely to result in two lines for long labels
 wrap_width <- 35  # Adjusted to allow most labels to wrap into two lines

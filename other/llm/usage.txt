@@ -9354,3 +9354,336 @@ Here are some subtitle options for your title:
 "Analyzing the Interplay Between Socioeconomic Status and Ethnic Diversity"
 "Insights into Housing, Education, and Employment Patterns in Toronto"
 You can choose one or modify it to better fit your paper!
+
+
+
+LLM: ChatGPT
+Date: september 25 2024
+
+User:
+In trying to render my paper, i get the following error: Quitting from lines 181-248 [fig-two] (paper.qmd)
+Error in `factor()`:
+! object 'filtered_income_data' not found
+Backtrace:
+ 1. base::factor(filtered_income_data$`Neighbourhood Name`, levels = income_categories)
+                                                                                                      
+Execution halted. Lines in questions are as follows ```{r}
+#| warning: false
+#| echo: false
+#| message: false
+#| label: fig-two
+#| fig-cap: The bar chart shows the distribution of income in two of Toronto's neighborhoods.
+
+
+# install libraries 
+# install.packages("tidyverse")
+# install.packages("dplyr")
+# install.packages("ggplot2")
+# install.packages("here")
+# install.packages("stringr")
+
+# Load necessary libraries
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(here)
+library(stringr)
+
+# Check if the file exists and load it 
+file_path <- here::here("inputs/data/analysis_data/neighborhood_analysis_data.csv")
+
+if (file.exists(file_path)) {
+  analysis_data <- read_csv(file_path)
+  print("File found and loaded successfully!")
+} else {
+  stop("Error: File not found at the specified path.")
+}
+
+# Reshape the data to long format for easier plotting
+long_data <- analysis_data %>%
+  pivot_longer(cols = -`Neighbourhood Name`, 
+               names_to = "Neighborhood", 
+               values_to = "Value")
+
+## Graphing income data
+# Define categories
+income_categories <- c("Under $10,000", "$10,000 to $19,999",
+                       "$20,000 to $29,999", "$30,000 to $39,999",
+                       "$40,000 to $49,999", "$50,000 to $59,999",
+                       "$60,000 to $69,999", "$70,000 to $79,999",
+                       "$80,000 to $89,999", "$90,000 to $99,999",
+                       "$100,000 to $149,999", "$150,000 and over")
+
+# Convert the 'Neighbourhood Name' to a factor with specified levels for ordering
+filtered_income_data$`Neighbourhood Name` <- factor(filtered_income_data$`Neighbourhood Name`, levels = income_categories)
+
+# Create the plot with number of individuals for income
+income_plot <- ggplot(filtered_income_data, aes(x = `Neighbourhood Name`, y = Value, fill = Neighborhood)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Comparison of Income Categories Between Neighborhoods",
+       x = "Income Categories",
+       y = "Number of Individuals") +
+  theme_minimal() +
+  scale_fill_manual(values = c("Rosedale-Moore Park" = "magenta", "Downtown Yonge East" = "darkmagenta")) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_y_continuous(breaks = seq(0, max(filtered_income_data$Value), by = 500))  # Adjust 'by' value for more tick marks
+
+# Save the plot with increased vertical size
+ggsave("income_plot.png", plot = income_plot, width = 10, height = 20)
+
+# Display the plot
+print(income_plot)
+
+ChatGTP
+The error you're seeing (object 'filtered_income_data' not found) is caused because the filtered_income_data object is referenced before it has been created. You need to define or create filtered_income_data before using it in your code.
+
+Here’s a revised version of your code that ensures filtered_income_data is properly created. This modification filters the income-related data from the long_data object, based on your income categories:
+
+r
+Copy code
+#| warning: false
+#| echo: false
+#| message: false
+#| label: fig-two
+#| fig-cap: The bar chart shows the distribution of income in two of Toronto's neighborhoods.
+
+# Load necessary libraries
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(here)
+library(stringr)
+
+# Check if the file exists and load it 
+file_path <- here::here("inputs/data/analysis_data/neighborhood_analysis_data.csv")
+
+if (file.exists(file_path)) {
+  analysis_data <- read_csv(file_path)
+  print("File found and loaded successfully!")
+} else {
+  stop("Error: File not found at the specified path.")
+}
+
+# Reshape the data to long format for easier plotting
+long_data <- analysis_data %>%
+  pivot_longer(cols = -`Neighbourhood Name`, 
+               names_to = "Neighborhood", 
+               values_to = "Value")
+
+# Define income categories
+income_categories <- c("Under $10,000", "$10,000 to $19,999",
+                       "$20,000 to $29,999", "$30,000 to $39,999",
+                       "$40,000 to $49,999", "$50,000 to $59,999",
+                       "$60,000 to $69,999", "$70,000 to $79,999",
+                       "$80,000 to $89,999", "$90,000 to $99,999",
+                       "$100,000 to $149,999", "$150,000 and over")
+
+# Filter the data for income-related rows
+filtered_income_data <- long_data %>%
+  filter(`Neighbourhood Name` %in% income_categories)
+
+# Convert the 'Neighbourhood Name' to a factor with specified levels for ordering
+filtered_income_data$`Neighbourhood Name` <- factor(filtered_income_data$`Neighbourhood Name`, levels = income_categories)
+
+# Create the plot with number of individuals for income
+income_plot <- ggplot(filtered_income_data, aes(x = `Neighbourhood Name`, y = Value, fill = Neighborhood)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Comparison of Income Categories Between Neighborhoods",
+       x = "Income Categories",
+       y = "Number of Individuals") +
+  theme_minimal() +
+  scale_fill_manual(values = c("Rosedale-Moore Park" = "magenta", "Downtown Yonge East" = "darkmagenta")) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_y_continuous(breaks = seq(0, max(filtered_income_data$Value), by = 500))  # Adjust 'by' value for more tick marks
+
+# Save the plot with increased vertical size
+ggsave("income_plot.png", plot = income_plot, width = 10, height = 20)
+
+# Display the plot
+print(income_plot)
+Key Changes:
+Filtered Income Data: Added a filter to select only the income-related rows from the long_data object and created the filtered_income_data object.
+Factor Conversion: Converted the Neighbourhood Name column to a factor, only after filtering the relevant income rows.
+This should resolve the error and render the graph successfully.
+
+
+
+
+
+
+You said:
+great! thats fixed but the following issue arose. Quitting from lines 270-350 [fig-three] (paper.qmd)
+Error in stri_split_lines():
+! object 'filtered_education_data' not found
+Backtrace:
+ 1. base::factor(...)
+ 2. stringr::str_wrap(...)
+ 3. stringi::stri_wrap(...)
+ 6. stringi::stri_split_lines(str)
+                                                                                                      
+Execution halted
+#| warning: false
+#| echo: false
+#| message: false
+#| label: fig-three
+#| fig-cap: The bar chart shows the distribution of highest level of education attainment in two of Toronto's neighborhoods.
+
+
+# install libraries 
+# install.packages("tidyverse")
+# install.packages("dplyr")
+# install.packages("ggplot2")
+# install.packages("here")
+# install.packages("stringr")
+
+# Load necessary libraries
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(here)
+library(stringr)
+
+# Check if the file exists and load it 
+file_path <- here::here("inputs/data/analysis_data/neighborhood_analysis_data.csv")
+
+if (file.exists(file_path)) {
+  analysis_data <- read_csv(file_path)
+  print("File found and loaded successfully!")
+} else {
+  stop("Error: File not found at the specified path.")
+}
+
+# Reshape the data to long format for easier plotting
+long_data <- analysis_data %>%
+  pivot_longer(cols = -Neighbourhood Name, 
+               names_to = "Neighborhood", 
+               values_to = "Value")
+
+
+## Graphing education data
+# Define the ordered education categories
+education_categories <- c("No certificate, diploma or degree",
+                          "High school diploma or equivalency certificate", 
+                          "Postsecondary certificate or diploma",
+                          "Apprenticeship or trades certificate or diploma",
+                          "Non-apprenticeship trades certificate or diploma",
+                          "College, CEGEP or other non-university certificate or diploma",
+                          "University certificate or diploma below bachelor level",
+                          "Bachelor's degree",
+                          "University certificate or diploma above bachelor level",
+                          "Degree in medicine, dentistry, veterinary medicine or optometry",
+                          "Master's degree", "Earned doctorate")
+
+# Set a wrap width that is likely to result in two lines for long labels
+wrap_width <- 35  # Adjusted to allow most labels to wrap into two lines
+
+# Wrap long x-axis labels to two lines where necessary
+wrapped_education_categories <- stringr::str_wrap(education_categories, width = wrap_width)
+
+# Convert 'Neighbourhood Name' to a factor with the wrapped labels in the desired order
+filtered_education_data$Neighbourhood Name <- factor(stringr::str_wrap(filtered_education_data$Neighbourhood Name, width = wrap_width),
+                                                       levels = wrapped_education_categories)
+
+# Create the plot with the number of individuals for education attainment
+education_plot <- ggplot(filtered_education_data, aes(x = Neighbourhood Name, y = Value, fill = Neighborhood)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Comparison of Education Attainment Between Neighborhoods",
+       x = "Education Levels",
+       y = "Number of Individuals") +
+  theme_minimal() +
+  scale_fill_manual(values = c("Rosedale-Moore Park" = "lightblue", "Downtown Yonge East" = "blue")) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +  # Rotate x-axis labels to 90 degrees
+  scale_y_continuous(breaks = seq(0, max(filtered_education_data$Value), by = 500))  # Adjust 'by' value for more tick marks
+
+# Save the plot with increased vertical size
+ggsave("education_plot.png", plot = education_plot, width = 10, height = 20)
+
+# Display the plot
+print(education_plot)
+
+2/2
+
+ChatGPT said:
+ChatGPT
+The error you are seeing (object 'filtered_education_data' not found) is occurring because filtered_education_data has not been defined before it is referenced. Like in the previous issue, you'll need to filter the data specifically for education-related categories.
+
+Here is the corrected code, where I filter the education-related data and define the filtered_education_data object before using it:
+
+r
+Copy code
+#| warning: false
+#| echo: false
+#| message: false
+#| label: fig-three
+#| fig-cap: The bar chart shows the distribution of highest level of education attainment in two of Toronto's neighborhoods.
+
+# Load necessary libraries
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(here)
+library(stringr)
+
+# Check if the file exists and load it 
+file_path <- here::here("inputs/data/analysis_data/neighborhood_analysis_data.csv")
+
+if (file.exists(file_path)) {
+  analysis_data <- read_csv(file_path)
+  print("File found and loaded successfully!")
+} else {
+  stop("Error: File not found at the specified path.")
+}
+
+# Reshape the data to long format for easier plotting
+long_data <- analysis_data %>%
+  pivot_longer(cols = -`Neighbourhood Name`, 
+               names_to = "Neighborhood", 
+               values_to = "Value")
+
+# Define the ordered education categories
+education_categories <- c("No certificate, diploma or degree",
+                          "High school diploma or equivalency certificate", 
+                          "Postsecondary certificate or diploma",
+                          "Apprenticeship or trades certificate or diploma",
+                          "Non-apprenticeship trades certificate or diploma",
+                          "College, CEGEP or other non-university certificate or diploma",
+                          "University certificate or diploma below bachelor level",
+                          "Bachelor's degree",
+                          "University certificate or diploma above bachelor level",
+                          "Degree in medicine, dentistry, veterinary medicine or optometry",
+                          "Master's degree", "Earned doctorate")
+
+# Filter the data for education-related rows
+filtered_education_data <- long_data %>%
+  filter(`Neighbourhood Name` %in% education_categories)
+
+# Set a wrap width for long labels
+wrap_width <- 35  # Adjusted to allow most labels to wrap into two lines
+
+# Wrap long x-axis labels to two lines where necessary
+wrapped_education_categories <- stringr::str_wrap(education_categories, width = wrap_width)
+
+# Convert 'Neighbourhood Name' to a factor with the wrapped labels in the desired order
+filtered_education_data$`Neighbourhood Name` <- factor(filtered_education_data$`Neighbourhood Name`, 
+                                                       levels = wrapped_education_categories)
+
+# Create the plot with the number of individuals for education attainment
+education_plot <- ggplot(filtered_education_data, aes(x = `Neighbourhood Name`, y = Value, fill = Neighborhood)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Comparison of Education Attainment Between Neighborhoods",
+       x = "Education Levels",
+       y = "Number of Individuals") +
+  theme_minimal() +
+  scale_fill_manual(values = c("Rosedale-Moore Park" = "lightblue", "Downtown Yonge East" = "blue")) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +  # Rotate x-axis labels to 90 degrees
+  scale_y_continuous(breaks = seq(0, max(filtered_education_data$Value), by = 500))  # Adjust 'by' value for more tick marks
+
+# Save the plot with increased vertical size
+ggsave("education_plot.png", plot = education_plot, width = 10, height = 20)
+
+# Display the plot
+print(education_plot)
+Key Changes:
+Filtered Education Data: Added a filter to select only the education-related rows from the long_data object and created the filtered_education_data object.
+Factor Conversion: Wrapped the education categories and converted Neighbourhood Name to a factor, ensuring the labels are ordered correctly.
+This should resolve the error and properly generate the education attainment chart.
