@@ -447,6 +447,123 @@ print(language_plot)
 ## Overview
 In this section, I present the results of the analysis comparing Rosedale-Moore Park and Downtown Yonge East across four key demographic features: ethnicity, income levels, highest levels of education attained, and knowledge of official languages. The following figures illustrate the distributions and comparisons for each of these features.
 
+```{r}
+#| warning: false
+#| echo: false
+#| message: false
+#| label: fig-five
+#| fig-cap: This scatterplot depicts the relationship between the highest level of education and income categories in  Rosedale-Moore Park and Downtown Yonge East neighborhoods.
+#| fig-width: 15
+
+
+# install libraries 
+# install.packages("tidyverse")
+# install.packages("dplyr")
+# install.packages("ggplot2")
+# install.packages("tidyr")
+# install.packages("stringr")
+
+# Load necessary libraries
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(stringr)
+
+# Check if the file exists and load it
+file_path <- here::here("inputs/data/analysis_data/neighborhood_analysis_data.csv")
+
+if (file.exists(file_path)) {
+  analysis_data <- read_csv(file_path)
+  print("File found and loaded successfully!")
+} else {
+  stop("Error: File not found at the specified path.")
+}
+
+# Define income and education categories
+income_categories <- c("Under $10,000", "$10,000 to $19,999", "$20,000 to $29,999", 
+                       "$30,000 to $39,999", "$40,000 to $49,999", 
+                       "$50,000 to $59,999", "$60,000 to $69,999", 
+                       "$70,000 to $79,999", "$80,000 to $89,999", 
+                       "$90,000 to $99,999", "$100,000 to $149,999", 
+                       "$150,000 and over")
+
+education_categories <- c("No certificate, diploma or degree",
+                          "High school diploma or equivalency certificate", 
+                          "Postsecondary certificate or diploma",
+                          "Apprenticeship or trades certificate or diploma",
+                          "Non-apprenticeship trades certificate or diploma",
+                          "College, CEGEP or other non-university certificate or diploma",
+                          "University certificate or diploma below bachelor level",
+                          "Bachelor's degree",
+                          "University certificate or diploma above bachelor level",
+                          "Degree in medicine, dentistry, veterinary medicine or optometry",
+                          "Master's degree", 
+                          "Earned doctorate")
+
+# Prepare the income data
+income_data <- analysis_data %>%
+  filter(`Neighbourhood Name` %in% income_categories) %>%
+  select(`Neighbourhood Name`, `Rosedale-Moore Park`, `Downtown Yonge East`)
+
+# Prepare the education data
+education_data <- analysis_data %>%
+  filter(`Neighbourhood Name` %in% education_categories) %>%
+  select(`Neighbourhood Name`, `Rosedale-Moore Park`, `Downtown Yonge East`)
+
+# Combine income and education into a new data frame
+combined_data <- data.frame(
+  Education = rep(education_categories, each = length(income_categories)),  # Repeat education levels
+  Income = rep(income_categories, times = length(education_categories))  # Repeat income categories
+)
+
+# Ensure the Income column is numeric by mapping the character values to their numeric indices
+combined_data$IncomeNumeric <- as.numeric(factor(combined_data$Income, levels = income_categories))
+
+# Set the Education variable as a factor to maintain order
+combined_data$Education <- factor(combined_data$Education, levels = education_categories)
+
+# Create the line plot
+line_plot <- ggplot(combined_data, aes(x = Education, y = IncomeNumeric)) +
+  geom_line(aes(group = 1), color = "blue") +  # Line connecting the points
+  geom_point(size = 2, color = "red") +  # Points to mark each category
+  scale_y_continuous(breaks = seq_along(income_categories), 
+                     labels = income_categories) +  # Set y-axis labels
+  labs(
+    title = "Line Plot of Income Across Education Levels",
+    x = "Education Levels",
+    y = "Income Categories"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate x-axis labels for readability
+
+# Print the line plot
+print(line_plot)
+
+#trying to fix issue of dataset values incorrectly being read?
+
+# Check the income_data
+print(income_data)
+
+# Check the education_data
+print(education_data)
+
+# Check the combined_data
+print(combined_data)
+
+# they all seem to contain the expected values 
+
+# Check the structure of each data frame
+str(income_data)
+str(education_data)
+str(combined_data)
+
+
+```
+
+
+
+
 ## Ethnicity Distribution
 Figure 1 shows the distribution of ethnic groups in Rosedale-Moore Park and Downtown Yonge East. The grouped bar chart indicates that Rosedale-Moore Park has a significantly higher number of non-visible minorities compared to Downtown Yonge East, with more than double the population in this category. Notably, the South Asian and Chinese communities are the most prominent visible minority groups in both neighborhoods, but Downtown Yonge East has a greater overall presence of visible minorities. This suggests that the downtown area is more culturally diverse, which may influence social dynamics and access to community resources.
 

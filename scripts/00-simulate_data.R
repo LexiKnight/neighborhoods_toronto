@@ -70,4 +70,4 @@ simulated_data <- data.frame(
 # summary(simulated_data)
 
 # Save the simulated data
-write_csv(simulated_data, "inputs/data/raw_data/simulated_neighborhood_data.csv")
+write_csv(simulated_data, "inputs/data/simulated_data/simulated_neighborhood_data.csv")
