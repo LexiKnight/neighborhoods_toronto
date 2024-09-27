@@ -6,26 +6,27 @@ author:
 thanks: "Code and data are available at: https://github.com/LexiKnight/neighborhoods_toronto/tree/main"
 date: today
 date-format: long
-abstract: "This paper examines the socio-economic disparities between Rosedale-Moore Park and Downtown Yonge East in Toronto, focusing on visible minorities, income levels, educational attainment, and language knowledge. The analysis reveals significant contrasts, with Rosedale-Moore Park characterized by higher incomes and educational achievements compared to the more diverse but economically challenged Downtown Yonge East. These findings underscore the influence of residential segregation on community resources and access to opportunities. Ultimately, the study highlights the need for targeted policies to address the inequalities present in urban neighborhoods."
+abstract: "This paper examines socio-economic disparities between two Toronto neighborhoods, Rosedale-Moore Park and Downtown Yonge East, focusing on visible minorities, income, education, and language proficiency. It finds that Rosedale-Moore park has a higher number of non-visible minorities, income levels, educational attainment and linguistic abilities, while Downtown Yonge East experiences greater socio-economic challenges. This research highlights how systemic inequalities across neighborhoods impact social mobility, access to opportunities, quality of education, healthcare access, and overall community cohesion in urban settings."
 
 format:
   pdf:
     toc: true
 number-sections: true
 bibliography: references.bib
+csl: apa-5th-edition.csl
 ---
 
 # Introduction
 
-Toronto, one of Canada’s most diverse cities, is characterized by a complex mosaic of neighborhoods that reflect a wide array of socio-economic differences. This paper explores the demographic disparities between two neighborhoods: Rosedale-Moore Park and Downtown Yonge East. Despite the proximity of these areas, they exhibit stark contrasts in visible minority populations, income levels, educational attainment, and knowledge of official languages. Such differences underscore the socio-economic inequalities that persist in urban centers like Toronto, emphasizing the need for deeper understanding of residential segregation and its implications for community cohesion.
+Toronto, one of Canada’s most diverse cities, features neighborhoods with marked socio-economic differences. This paper examines two such neighborhoods: Rosedale-Moore Park and Downtown Yonge East. Despite their proximity, these areas show clear contrasts in ethnic populations, income levels, educational attainment, and language knowledge, highlighting the socio-economic inequalities present in urban centers like Toronto.
 
-Visible minority populations have increasingly concentrated in specific areas of Toronto, often influenced by a combination of economic factors and structural constraints. Research indicates that the segregation of visible minorities is not merely a matter of choice; it is deeply rooted in historical and socio-economic contexts that limit options for many communities (Goel, 2023). The presence of visible minorities in both Rosedale-Moore Park and Downtown Yonge East varies significantly, affecting community dynamics and access to resources. Understanding these patterns is essential, as they reflect broader trends in residential segregation and inequality, which have been exacerbated by systemic barriers in the housing market.
+Visible minorities in Toronto have become concentrated in specific neighborhoods, driven by economic factors and structural constraints. Research shows that segregation of visible minorities is not solely voluntary; it stems from historical and socio-economic factors that restrict opportunities for many communities [@Goel]. In both Rosedale-Moore Park and Downtown Yonge East, the presence of visible minorities varies significantly, shaping community dynamics and resource access. These patterns reflect broader trends in residential segregation and inequality across the city.
 
-Income levels further delineate the disparities between these neighborhoods. Studies show that residential income segregation correlates strongly with access to resources, services, and overall quality of life (Smith, 2024). While Rosedale-Moore Park is characterized by higher average incomes and greater access to amenities, Downtown Yonge East faces challenges associated with lower income levels. This income stratification influences not only the living conditions but also the socio-economic mobility of residents, making it a crucial factor in the analysis of neighborhood dynamics.
+Income levels sharply differentiate these neighborhoods. Studies reveal that residential income segregation affects access to resources, services, and overall quality of life [@Quick]. While Rosedale-Moore Park is home to higher-income residents with better access to amenities, Downtown Yonge East faces lower incomes and associated challenges. This income divide plays a critical role in shaping the socio-economic mobility of each neighborhood’s residents.
 
-Educational attainment serves as another vital indicator of socio-economic status and community resources. A higher proportion of residents in Rosedale-Moore Park possess advanced degrees compared to their counterparts in Downtown Yonge East. This disparity in education is linked to the employment opportunities available in these areas, highlighting the intricate relationship between educational attainment, income, and overall community well-being. Access to quality education often determines the trajectory of socio-economic status, perpetuating cycles of advantage or disadvantage.
+Educational attainment further distinguishes the socio-economic landscape of these neighborhoods. Higher proportions of residents in Rosedale-Moore Park hold advanced degrees, which corresponds with greater employment opportunities and higher incomes [@Goel]. In contrast, Downtown Yonge East shows lower levels of educational attainment, reflecting broader socio-economic inequalities that persist in the city.
 
-Knowledge of official languages, particularly English and French, plays a critical role in social integration and access to services within these neighborhoods. While both areas exhibit multilingual populations, the proficiency in official languages often influences employment opportunities and social connections. The ability to communicate effectively in the dominant languages of Canada can significantly impact an individual's quality of life, further emphasizing the socio-economic divides present in Toronto.
+Language knowledge, particularly English and French, also plays a key role in shaping socio-economic outcomes. Bilingual individuals in Toronto earn 40% more than unilingual anglophones [@Jedwab]. Although both neighborhoods are linguistically diverse, proficiency in official languages affects employment prospects and access to services, reinforcing the socio-economic divides seen between Rosedale-Moore Park and Downtown Yonge East.
 
 The remainder of this paper is structured as follows: @sec-data presents the methods used to analyze these demographic differences, followed by @sec-results, which details the results of the comparison between Rosedale-Moore Park and Downtown Yonge East. @sec-discussion offers a discussion of the findings, highlighting the implications for understanding residential segregation in Toronto. Finally, @sec-conclusion concludes with a reflection on the limitations of the study and suggestions for future research directions.
 
@@ -448,12 +449,12 @@ print(language_plot)
 In this section, I present the results of the analysis comparing Rosedale-Moore Park and Downtown Yonge East across four key demographic features: ethnicity, income levels, highest levels of education attained, and knowledge of official languages. The following figures illustrate the distributions and comparisons for each of these features.
 
 ```{r}
-#| warning: false
-#| echo: false
-#| message: false
-#| label: fig-five
-#| fig-cap: This scatterplot depicts the relationship between the highest level of education and income categories in  Rosedale-Moore Park and Downtown Yonge East neighborhoods.
-#| fig-width: 15
+# #| warning: false
+# #| echo: false
+# #| message: false
+# #| label: fig-five
+# #| fig-cap: This scatterplot depicts the relationship between the highest level of education and income categories in  Rosedale-Moore Park and Downtown Yonge East neighborhoods.
+# #| fig-width: 15
 
 
 # install libraries 
@@ -471,92 +472,36 @@ library(tidyr)
 library(stringr)
 
 # Check if the file exists and load it
-file_path <- here::here("inputs/data/analysis_data/neighborhood_analysis_data.csv")
+# file_path <- here::here("inputs/data/analysis_data/neighborhood_analysis_data.csv")
 
-if (file.exists(file_path)) {
-  analysis_data <- read_csv(file_path)
-  print("File found and loaded successfully!")
-} else {
-  stop("Error: File not found at the specified path.")
-}
+# if (file.exists(file_path)) {
+  #analysis_data <- read_csv(file_path)
+  #print("File found and loaded successfully!")
+#} else {
+ # stop("Error: File not found at the specified path.")
+#}
 
 # Define income and education categories
-income_categories <- c("Under $10,000", "$10,000 to $19,999", "$20,000 to $29,999", 
-                       "$30,000 to $39,999", "$40,000 to $49,999", 
-                       "$50,000 to $59,999", "$60,000 to $69,999", 
-                       "$70,000 to $79,999", "$80,000 to $89,999", 
-                       "$90,000 to $99,999", "$100,000 to $149,999", 
-                       "$150,000 and over")
+#income_categories <- c("Under $10,000", "$10,000 to $19,999", "$20,000 to $29,999", 
+                       #"$30,000 to $39,999", "$40,000 to $49,999", 
+                       #"$50,000 to $59,999", "$60,000 to $69,999", 
+                       #'$70,000 to $79,999", "$80,000 to $89,999", 
+                       #"$90,000 to $99,999", "$100,000 to $149,999", 
+                       #"$150,000 and over")
 
-education_categories <- c("No certificate, diploma or degree",
-                          "High school diploma or equivalency certificate", 
-                          "Postsecondary certificate or diploma",
-                          "Apprenticeship or trades certificate or diploma",
-                          "Non-apprenticeship trades certificate or diploma",
-                          "College, CEGEP or other non-university certificate or diploma",
-                          "University certificate or diploma below bachelor level",
-                          "Bachelor's degree",
-                          "University certificate or diploma above bachelor level",
-                          "Degree in medicine, dentistry, veterinary medicine or optometry",
-                          "Master's degree", 
-                          "Earned doctorate")
+#education_categories <- c("No certificate, diploma or degree",
+                          #"High school diploma or equivalency certificate", 
+                          #"Postsecondary certificate or diploma",
+                          #"Apprenticeship or trades certificate or diploma",
+                         # "Non-apprenticeship trades certificate or diploma",
+                       #   "College, CEGEP or other non-university certificate or diploma",
+                          #"University certificate or diploma below bachelor level",
+                         # "Bachelor's degree",
+                          #"University certificate or diploma above bachelor level",
+                          #"Degree in medicine, dentistry, veterinary medicine or optometry",
+                          #"Master's degree", 
+                          #"Earned doctorate")
 
-# Prepare the income data
-income_data <- analysis_data %>%
-  filter(`Neighbourhood Name` %in% income_categories) %>%
-  select(`Neighbourhood Name`, `Rosedale-Moore Park`, `Downtown Yonge East`)
-
-# Prepare the education data
-education_data <- analysis_data %>%
-  filter(`Neighbourhood Name` %in% education_categories) %>%
-  select(`Neighbourhood Name`, `Rosedale-Moore Park`, `Downtown Yonge East`)
-
-# Combine income and education into a new data frame
-combined_data <- data.frame(
-  Education = rep(education_categories, each = length(income_categories)),  # Repeat education levels
-  Income = rep(income_categories, times = length(education_categories))  # Repeat income categories
-)
-
-# Ensure the Income column is numeric by mapping the character values to their numeric indices
-combined_data$IncomeNumeric <- as.numeric(factor(combined_data$Income, levels = income_categories))
-
-# Set the Education variable as a factor to maintain order
-combined_data$Education <- factor(combined_data$Education, levels = education_categories)
-
-# Create the line plot
-line_plot <- ggplot(combined_data, aes(x = Education, y = IncomeNumeric)) +
-  geom_line(aes(group = 1), color = "blue") +  # Line connecting the points
-  geom_point(size = 2, color = "red") +  # Points to mark each category
-  scale_y_continuous(breaks = seq_along(income_categories), 
-                     labels = income_categories) +  # Set y-axis labels
-  labs(
-    title = "Line Plot of Income Across Education Levels",
-    x = "Education Levels",
-    y = "Income Categories"
-  ) +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate x-axis labels for readability
-
-# Print the line plot
-print(line_plot)
-
-#trying to fix issue of dataset values incorrectly being read?
-
-# Check the income_data
-print(income_data)
-
-# Check the education_data
-print(education_data)
-
-# Check the combined_data
-print(combined_data)
-
-# they all seem to contain the expected values 
-
-# Check the structure of each data frame
-str(income_data)
-str(education_data)
-str(combined_data)
 
 
 ```

@@ -9687,3 +9687,6 @@ Key Changes:
 Filtered Education Data: Added a filter to select only the education-related rows from the long_data object and created the filtered_education_data object.
 Factor Conversion: Wrapped the education categories and converted Neighbourhood Name to a factor, ensuring the labels are ordered correctly.
 This should resolve the error and properly generate the education attainment chart.
+
+LLM: ChatGPT
+Date: september 26 2024
