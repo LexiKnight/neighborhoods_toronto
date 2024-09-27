@@ -274,7 +274,7 @@ long_data <- analysis_data %>%
 ## Graphing education data
 # Define the ordered education categories
 education_categories <- c("No certificate, diploma or degree",
-                          "High school diploma or equivalency certificate", 
+                          "High (secondary) school diploma or equivalency certificate", 
                           "Postsecondary certificate or diploma",
                           "Apprenticeship or trades certificate or diploma",
                           "Non-apprenticeship trades certificate or diploma",
@@ -316,6 +316,9 @@ education_plot <- ggplot(filtered_education_data, aes(x = `Neighbourhood Name`, 
 
 # Print the plot
 print(education_plot)
+
+
+
 
 
 
