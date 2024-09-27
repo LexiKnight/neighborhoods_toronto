@@ -424,29 +424,31 @@ Conversely, Downtown Yonge East has a slightly higher proportion of individuals 
 
 # Discussion {#sec-discussion}
 
-## First discussion point {#sec-first-point}
+## Ethnic Group Distribution {#sec-first-point}
 
-The analysis of ethnic group distribution between Rosedale-Moore Park and Downtown Yonge East reveals significant demographic contrasts. Rosedale-Moore Park's predominance of non-visible minorities, coupled with a smaller visible minority population, suggests a more homogeneous cultural environment. In contrast, Downtown Yonge East's diversity may contribute to richer cultural dynamics and social interactions, but it could also present challenges in terms of resource allocation and community cohesion. Understanding the implications of these demographic differences is crucial for developing targeted social programs that address the needs of diverse populations.
+The demographic contrasts between Rosedale-Moore Park and Downtown Yonge East highlight significant implications for community dynamics. Rosedale-Moore Park's predominance of non-visible minorities suggests a more homogeneous cultural environment, which may limit cultural exchange and social resource availability. In contrast, Downtown Yonge East's diversity fosters rich cultural interactions but may also present challenges in resource allocation and community cohesion. Understanding these dynamics is essential for developing targeted social programs that address the unique needs of each neighborhood.
 
-## Second discussion point
+## Income Distribution
 
-Income distribution data highlights a stark socioeconomic divide between the two neighborhoods. The higher income levels in Rosedale-Moore Park indicate greater economic stability, while the concentration of lower-income residents in Downtown Yonge East raises concerns about affordability and access to essential services. This disparity could lead to a range of social issues, including housing insecurity and limited access to education and employment opportunities. Addressing these income disparities should be a priority for policymakers and community organizations to ensure equitable development across Toronto neighborhoods.
+The stark socioeconomic divide between the neighborhoods raises critical concerns about urban equity. The concentration of lower-income residents in Downtown Yonge East may lead to issues such as housing insecurity and limited access to essential services. These economic disparities necessitate strategic interventions from policymakers and community organizations aimed at improving access to affordable housing and comprehensive social services, thereby ensuring equitable development across Toronto's neighborhoods.
 
-## Third discussion point
+## Education Attainment
 
-Educational attainment appears relatively balanced between the neighborhoods, but Rosedale-Moore Park's higher representation of individuals with advanced degrees suggests a link between education and income levels. This relationship indicates that access to quality education is critical for social mobility. Programs aimed at improving educational resources in lower-income neighborhoods like Downtown Yonge East could help bridge the gap in educational attainment, leading to improved economic outcomes for residents.
+While educational attainment appears relatively balanced, Rosedale-Moore Park's higher representation of individuals with advanced degrees indicates a correlation between education and income. This relationship emphasizes the need for equitable access to quality education in lower-income neighborhoods like Downtown Yonge East. Programs focused on enhancing educational resources, mentorship opportunities, and vocational training could play a pivotal role in bridging the educational divide and improving economic outcomes for residents.
+
+## Language Proficiency
+The analysis of language proficiency shows that Rosedale-Moore Park has a greater proportion of residents who speak only English or both official languages. This suggests stronger linguistic integration with Canada’s official languages, likely due to the area’s educational and socioeconomic advantages. Conversely, Downtown Yonge East has a higher proportion of individuals who speak neither official language, indicating potential language barriers and social integration challenges. This disparity highlights the importance of providing resources to support linguistic diversity and inclusion for non-official language speakers in Toronto.
 
 ## Weaknesses
-While the study provides valuable insights, it is important to acknowledge its limitations. The reliance on census data may not capture the most current demographic shifts, as changes in population dynamics can occur rapidly. Additionally, the analysis focused on only two neighborhoods, which may not be representative of broader trends across Toronto. Future research should consider a larger sample size and more recent data to enhance the robustness of findings.
+While the study provides valuable insights, the reliance on census data may not capture the most current demographic shifts, as population dynamics can change rapidly. Additionally, the analysis focused on only two neighborhoods, which may not represent broader trends across Toronto. Future research should consider a larger sample size and more recent data to enhance the robustness of findings.
 
 ## Future Directions
 
-Future studies could explore the underlying factors contributing to the demographic differences observed in this analysis. Investigating the role of local policies, housing markets, and community support systems in shaping these neighborhoods could provide a deeper understanding of urban dynamics. Furthermore, longitudinal studies examining trends over time would help identify shifts in demographic patterns and their implications for community development.
+Future studies could explore the underlying factors contributing to the demographic differences observed in this analysis. Investigating the role of local policies, housing markets, and community support systems in shaping these neighborhoods could provide a deeper understanding of urban dynamics. Longitudinal studies examining trends over time would help identify shifts in demographic patterns and their implications for community development.
 
 # Conclusion {#sec-conclusion}
 
-In conclusion, this analysis underscores the importance of understanding demographic, socioeconomic, and educational disparities between Toronto neighborhoods. The findings highlight the need for targeted interventions that address the unique challenges faced by diverse populations. By fostering equitable access to resources, educational opportunities, and community support, we can work towards building inclusive urban environments that benefit all residents.
-
+This analysis highlights the importance of understanding demographic, socioeconomic, and linguistic disparities between neighborhoods like Rosedale-Moore Park and Downtown Yonge East. The findings reveal contrasts in ethnic composition, income levels, educational attainment, and language proficiency, reflecting the diverse experiences of residents in these urban environments. Such disparities require targeted interventions that address the unique challenges faced by each community. By promoting equitable access to resources, educational opportunities, and support services, policymakers and community organizations can work towards building inclusive urban environments that benefit all residents. Future research should continue to explore the interplay of these factors to develop strategies for promoting social cohesion and equitable development across Toronto's neighborhoods.
 
 
 \newpage
