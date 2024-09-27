@@ -236,6 +236,8 @@ Another important aspect explored in this study is the distribution of education
 #| message: false
 #| label: fig-three
 #| fig-cap: This bar chart illustrates the distribution of educational attainment levels in Rosedale-Moore Park and Downtown Yonge East, revealing disparities in educational qualifications and differences in access to education opportunies.
+#| fig-height: 7
+#| fig-width: 10
 
 
 # install libraries 
@@ -303,17 +305,18 @@ education_plot <- ggplot(filtered_education_data, aes(x = `Neighbourhood Name`, 
   labs(title = "Comparison of Education Attainment Between Neighborhoods",
        x = "Education Levels",
        y = "Number of Individuals") +
-  theme_minimal() +
+  theme_minimal() +  # Call theme_minimal without any arguments
+  theme(plot.title = element_text(size = 20),  # Set the title size
+        axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5, size = 13),
+        axis.title.x = element_text(size = 17),
+        axis.text.y = element_text(size = 13),
+        axis.title.y = element_text(size = 17)) +  
   scale_fill_manual(values = c("Rosedale-Moore Park" = "lightblue", "Downtown Yonge East" = "blue")) +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +  # Rotate x-axis labels to 90 degrees
-  scale_y_continuous(breaks = seq(0, max(filtered_education_data$Value), by = 500))  
+  scale_y_continuous(breaks = seq(0, max(filtered_education_data$Value), by = 500))
 
-
-# Save the plot with increased vertical size
-ggsave("education_plot.png", plot = education_plot, width = 30, height = 49)
-
-# Display the plot
+# Print the plot
 print(education_plot)
+
 
 
 ```
@@ -421,6 +424,8 @@ In contrast, both neighborhoods exhibit similar numbers of residents with only a
 In @fig-four, the distribution of knowledge of Canada’s official languages highlights several key trends. Rosedale-Moore Park shows a greater proportion of residents who speak only English or both langauges, suggesting stronger linguistic integration with Canada’s official languages in this neighborhood. This may be attributed to the area’s educational or socioeconomic advantages, which often correlate with bilingualism and access to more diverse opportunities. The presence of bilingual residents could also reflect the neighborhood’s international connections or professional class.
 
 Conversely, Downtown Yonge East has a slightly higher proportion of individuals who speak neither official language, raising questions about language barriers and social integration in the downtown area. This might indicate a higher presence of recent immigrants or communities where English and French are not dominant languages. While the number of only French speakers is minimal in both neighborhoods, this analysis reveals the importance of supporting linguistic diversity and providing community resources to foster greater inclusivity for non-official language speakers in Toronto.
+
+\newpage
 
 # Discussion {#sec-discussion}
 
